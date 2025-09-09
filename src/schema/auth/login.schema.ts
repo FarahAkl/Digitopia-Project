@@ -25,10 +25,10 @@ export const loginErorrResponseSchema = z.object({
   message: z.string(),
 });
 
-export const loginResponse = z.union([
+export const loginResponseSchema = z.union([
   loginErorrResponseSchema,
   loginSuccessResponseSchema,
 ]);
 
 export type loginRequstT = z.infer<typeof loginRequestSchema>;
-export type loginResponseT = z.infer<typeof loginResponse>;
+export type loginResponseT = z.infer<typeof loginResponseSchema>;

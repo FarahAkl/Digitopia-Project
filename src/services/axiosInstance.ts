@@ -1,12 +1,12 @@
 import axios, {
   AxiosError,
   type AxiosResponse,
-  type InternalAxiosRequestConfig
+  type InternalAxiosRequestConfig,
 } from "axios";
 import { deleteCookie, getCookie } from "../utils/TS-Cookie";
 
 const axiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
+  baseURL: "/",
   headers: {
     "Content-Type": "application/json",
     Accept: "application/json",
@@ -23,7 +23,7 @@ axiosInstance.interceptors.request.use(
   },
   (error: AxiosError) => {
     return Promise.reject(error);
-  }
+  },
 );
 
 axiosInstance.interceptors.response.use(
@@ -36,7 +36,7 @@ axiosInstance.interceptors.response.use(
       // window.location.href('/');
     }
     return Promise.reject(error);
-  }
+  },
 );
 
 export default axiosInstance;
