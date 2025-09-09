@@ -1,18 +1,15 @@
 import axiosInstance from "../axiosInstance";
 import {
   loginResponseSchema,
+  type loginRequstT,
   type loginResponseT,
 } from "../../schema/auth/login.schema";
 import { setCookie } from "../../utils/TS-Cookie";
 
 export const login = async (
-  email: string,
-  password: string,
+  loginData:loginRequstT
 ): Promise<loginResponseT> => {
-  const response = await axiosInstance.post("/api/Auth/Login", {
-    email,
-    password,
-  });
+  const response = await axiosInstance.post("/api/Auth/Login",loginData);
   const data = loginResponseSchema.parse(response.data);
   if ("token" in data) {
     // success case
