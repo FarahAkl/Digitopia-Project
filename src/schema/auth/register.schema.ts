@@ -15,8 +15,7 @@ export const registerRequestSchema = z.object({
     ),
   phoneNumber: z
     .string()
-    .regex(/^01[0-9]{9}$/, "Phone number must be a valid Egyptian number")
-    .optional(),
+    .regex(/^01[0-9]{9}$/, "Phone number must be a valid Egyptian number"),
   profileImageUrl: z.url().optional(),
   location: z.string().optional(),
 });
