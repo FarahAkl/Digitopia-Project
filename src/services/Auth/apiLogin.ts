@@ -4,7 +4,7 @@ import {
   type loginRequestT,
   type loginResponseT,
 } from "../../schema/auth/login.schema";
-import { setCookie } from "../../utils/TS-Cookie";
+import { deleteCookie, setCookie } from "../../utils/TS-Cookie";
 
 export const login = async (
   loginData: loginRequestT,
@@ -21,4 +21,8 @@ export const login = async (
     console.error("Login failed:", error.response?.data || error.message);
     throw error;
   }
+};
+
+export const logout = () => {
+  deleteCookie({name:"token"});
 };
