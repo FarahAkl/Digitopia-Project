@@ -30,5 +30,5 @@ export const loginResponseSchema = z.union([
   loginSuccessResponseSchema,
 ]);
 
-export type loginRequstT = z.infer<typeof loginRequestSchema>;
+export type loginRequestT = z.infer<typeof loginRequestSchema>;
 export type loginResponseT = z.infer<typeof loginResponseSchema>;
