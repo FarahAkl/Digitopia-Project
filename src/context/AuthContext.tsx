@@ -1,4 +1,4 @@
-import { createContext, useState, type ReactNode } from "react";
+import { createContext, useContext, useState, type ReactNode } from "react";
 import {
   login as loginService,
   logout as logoutService,
@@ -10,14 +10,18 @@ type AuthContextT = {
   logout: () => void;
 };
 
-export const AuthContext = createContext<AuthContextT | null>(null);
+const AuthContext = createContext<AuthContextT | null>(null);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [token, setToken] = useState<string | null>(null);
 
   const login = async (email: string, password: string) => {
     const data = await loginService({ email, password });
-    if ("token" in data) setToken(data.token);
+    if ("token" in data) {
+      setToken(data.token);
+    } else {
+      throw new Error(data.message)
+    }
   };
 
   const logout = () => {
@@ -31,3 +35,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     </AuthContext.Provider>
   );
 };
+
+export function useAuth() {
+  const context = useContext(AuthContext);
+  if (!context) throw new Error("useAuth must be used inside AuthProvider");
+  return context;
+}

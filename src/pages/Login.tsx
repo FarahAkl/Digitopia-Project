@@ -1,48 +1,9 @@
-// import { useState, useContext } from "react";
-// import { AuthContext } from "../context/AuthContext";
-// // import { useNavigate } from "react-router";
-
-// export default function Login() {
-//   const [email, setEmail] = useState("");
-//   const [password, setPassword] = useState("");
-//   const auth = useContext(AuthContext);
-// //   const navigate = useNavigate();
-
-//   const handleSubmit = async (e: React.FormEvent) => {
-//     e.preventDefault();
-//     try {
-//         await auth?.login(email, password);
-//         setEmail('')
-//         setPassword('')
-//     } catch (err) {
-//       console.log(err)
-//     }
-//   };
-
-//   return (
-//     <>
-//       <form onSubmit={handleSubmit}>
-//         <input
-//           type="email"
-//           value={email}
-//           onChange={(e) => setEmail(e.target.value)}
-//         />
-//         <input
-//           type="password"
-//           value={password}
-//           onChange={(e) => setPassword(e.target.value)}
-//         />
-//         <button type="submit">Login</button>
-//       </form>
-//     </>
-//   );
-// }
-
-import { useState, useContext } from "react";
-import { AuthContext } from "../context/AuthContext";
+import { useState } from "react";
+import { useAuth } from "../context/AuthContext";
 // import { useNavigate } from "react-router";
 import { loginRequestSchema } from "../schema/auth/login.schema";
-import { setErrorMap } from "zod/v3";
+import { Link } from "react-router";
+import { AxiosError } from "axios";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -50,7 +11,7 @@ export default function Login() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const auth = useContext(AuthContext);
+  const auth =useAuth();
   // const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -60,8 +21,7 @@ export default function Login() {
     // validate inputs with zod
     const parsed = loginRequestSchema.safeParse({ email, password });
     if (!parsed.success) {
-      const firstError =
-        parsed.error.issues?.at(0)?.message || "Invalid input"; // Zod v3 fallback
+      const firstError = parsed.error.issues?.at(0)?.message || "Invalid input";
       setError(firstError);
       return;
     }
@@ -73,13 +33,17 @@ export default function Login() {
       setPassword("");
 
       // navigate("/dashboard");
-    } catch (err: any) {
-      setError(
-        err?.status === 401
-          ? "Invalid Email or Password"
-          : "Login failed. Please try again.",
-      );
-      console.log(err);
+    } catch (err: unknown) {
+      if (err instanceof AxiosError) {
+        setError(
+          err?.status === 401
+            ? "Invalid Email or Password"
+            : "Login failed. Please try again.",
+        );
+        console.log(err);
+      } else {
+        setError("Unexpected error occurred.");
+      }
     } finally {
       setLoading(false);
     }
@@ -112,6 +76,7 @@ export default function Login() {
       >
         {loading ? "Logging in..." : "Login"}
       </button>
+      <Link to="/register">Register</Link>
     </form>
   );
 }
