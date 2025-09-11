@@ -15,6 +15,10 @@ export const changePasswordRequestSchema = z.object({
     ),
 });
 
+export type changePasswordRequestT = z.infer<
+  typeof changePasswordRequestSchema
+>;
+
 export const changePasswordErrorResponseSchema = z.object({
   message: z.string(),
 });
@@ -22,16 +26,19 @@ export const changePasswordErrorResponseSchema = z.object({
 export const changePasswordSuccessResponseSchema = z.object({
   message: z.string(),
 });
+export type changePasswordSuccessT = z.infer<
+  typeof changePasswordSuccessResponseSchema
+>;
 
 export const changePasswordResponseSchema = z.union([
   changePasswordSuccessResponseSchema,
   changePasswordErrorResponseSchema,
 ]);
 
-export type changePasswordRequestT = z.infer<
-  typeof changePasswordRequestSchema
+export type changePasswordErrorT = z.infer<
+  typeof changePasswordErrorResponseSchema
 >;
 
-export type changePasswordResponseT = z.infer<
-  typeof changePasswordResponseSchema
->;
+export type ChangePasswordResultT =
+  | ({ ok: true } & changePasswordSuccessT)
+  | ({ ok: false } & changePasswordErrorT);

@@ -30,16 +30,23 @@ export default function ChangePassword() {
       return;
     }
 
+    if (parsed.data.oldPassword === parsed.data.newPassword) {
+      setError("New password cannot be the same as the old password");
+      return;
+    }
+
     try {
       setLoading(true);
-        const res = await changePassword(parsed.data);
+      const res = await changePassword(parsed.data);
 
-      if ("message" in res) {
+      if (res.ok) {
         setSuccess(res.message);
+        setEmail("");
+        setOldPassword("");
+        setNewPassword("");
+      } else {
+        setError(res.message);
       }
-      setEmail("");
-      setOldPassword("");
-      setNewPassword("");
     } catch (err: unknown) {
       if (err instanceof AxiosError) {
         setError("Change password failed. Please try again.");
