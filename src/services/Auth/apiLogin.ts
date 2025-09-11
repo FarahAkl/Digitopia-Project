@@ -5,6 +5,7 @@ import {
   type loginResponseT,
 } from "../../schema/auth/login.schema";
 import { deleteCookie, setCookie } from "../../utils/TS-Cookie";
+import { AxiosError } from "axios";
 
 export const login = async (
   loginData: loginRequestT,
@@ -17,12 +18,14 @@ export const login = async (
       setCookie({ name: "token", value: data.token, days: 1 });
     }
     return data;
-  } catch (error: any) {
-    console.error("Login failed:", error.response?.data || error.message);
+  } catch (error: unknown) {
+    if (error instanceof AxiosError) {
+      console.error("Login failed:", error.response?.data || error.message);
+    }
     throw error;
   }
 };
 
 export const logout = () => {
-  deleteCookie({name:"token"});
+  deleteCookie({ name: "token" });
 };

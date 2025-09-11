@@ -5,6 +5,7 @@ import {
   type registerRequestT,
   type registerResponseT,
 } from "../../schema/auth/register.schema";
+import { AxiosError } from "axios";
 
 /**
  * Service function to register a new user
@@ -18,8 +19,8 @@ export const register = async (
     const parsedResponse = registerResponseSchema.parse(response.data);
 
     return parsedResponse;
-  } catch (error: any) {
-    if (error.response) {
+  } catch (error: unknown) {
+    if (error instanceof AxiosError && error.response) {
       try {
         const parsedError = registerResponseSchema.parse(error.response.data);
         return parsedError;
@@ -27,7 +28,6 @@ export const register = async (
         return { message: "An unknown error occurred" };
       }
     }
-
-    return { message: error.message || "An unknown error occurred" };
+    return { message: "An unknown error occurred" };
   }
 };

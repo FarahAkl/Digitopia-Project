@@ -1,10 +1,11 @@
+import type { changePasswordResponseT } from "../../schema/auth/resetPassword.schema";
+import { AxiosError } from "axios";
 import axiosInstance from "../axiosInstance";
 import {
   changePasswordErrorResponseSchema,
   changePasswordRequestSchema,
   type changePasswordRequestT,
 } from "../../schema/auth/changePassword.schema";
-import type { changePasswordResponseT } from "../../schema/auth/resetPassword.schema";
 
 export const changePassword = async (
   data: changePasswordRequestT,
@@ -18,10 +19,10 @@ export const changePassword = async (
     );
 
     return changePasswordErrorResponseSchema.parse(response.data);
-  } catch (error: any) {
-    if (error.response) {
+  } catch (error: unknown) {
+    if (error instanceof AxiosError && error.response) {
       return changePasswordErrorResponseSchema.parse(error.response.data);
     }
-    return { message: error.message || "Unknown error" };
+    return { message: "Unknown error" };
   }
 };
