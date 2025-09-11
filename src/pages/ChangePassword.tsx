@@ -1,25 +1,29 @@
 import { useState } from "react";
-import { useAuth } from "../context/AuthContext";
-// import { useNavigate } from "react-router";
-import { loginRequestSchema } from "../schema/auth/login.schema";
-import { Link } from "react-router";
+import { changePassword } from "../services/Auth/apiChangePassword";
+import { changePasswordRequestSchema } from "../schema/auth/changePassword.schema";
 import { AxiosError } from "axios";
+import { Link } from "react-router";
 
-export default function Login() {
+export default function ChangePassword() {
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-
-  const auth =useAuth();
-  // const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    setSuccess(null);
 
     // validate inputs with zod
-    const parsed = loginRequestSchema.safeParse({ email, password });
+    const parsed = changePasswordRequestSchema.safeParse({
+      email,
+      oldPassword,
+      newPassword,
+    });
+
     if (!parsed.success) {
       const firstError = parsed.error.issues?.at(0)?.message || "Invalid input";
       setError(firstError);
@@ -28,19 +32,18 @@ export default function Login() {
 
     try {
       setLoading(true);
-      await auth?.login(email, password);
-      setEmail("");
-      setPassword("");
+        const res = await changePassword(parsed.data);
 
-      // navigate("/dashboard");
+      if ("message" in res) {
+        setSuccess(res.message);
+      }
+      setEmail("");
+      setOldPassword("");
+      setNewPassword("");
     } catch (err: unknown) {
       if (err instanceof AxiosError) {
-        setError(
-          err?.status === 401
-            ? "Invalid Email or Password"
-            : "Login failed. Please try again.",
-        );
-        console.log(err);
+        setError("Change password failed. Please try again.");
+        console.error(err);
       } else {
         setError("Unexpected error occurred.");
       }
@@ -63,21 +66,31 @@ export default function Login() {
       />
       <input
         type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        placeholder="Enter your password"
+        value={oldPassword}
+        onChange={(e) => setOldPassword(e.target.value)}
+        placeholder="Enter your old password"
         className="rounded border p-2"
       />
+      <input
+        type="password"
+        value={newPassword}
+        onChange={(e) => setNewPassword(e.target.value)}
+        placeholder="Enter your new password"
+        className="rounded border p-2"
+      />
+
       {error && <p className="text-sm text-red-500">{error}</p>}
+      {success && <p className="text-sm text-green-600">{success}</p>}
+
       <button
         type="submit"
         disabled={loading}
         className="rounded bg-blue-600 py-2 text-white hover:bg-blue-700 disabled:opacity-50"
       >
-        {loading ? "Logging in..." : "Login"}
+        {loading ? "Changing..." : "Change Password"}
       </button>
-      <Link to="/register">Register</Link>
-      <Link to="/changePassword">Change Password</Link>
+
+      <Link to="/login">Back to Login</Link>
     </form>
   );
 }

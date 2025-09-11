@@ -4,8 +4,11 @@ import axiosInstance from "../axiosInstance";
 import {
   changePasswordErrorResponseSchema,
   changePasswordRequestSchema,
+  changePasswordResponseSchema,
+  changePasswordSuccessResponseSchema,
   type changePasswordRequestT,
 } from "../../schema/auth/changePassword.schema";
+import type z from "zod";
 
 export const changePassword = async (
   data: changePasswordRequestT,
@@ -18,11 +21,21 @@ export const changePassword = async (
       validData,
     );
 
-    return changePasswordErrorResponseSchema.parse(response.data);
+    return changePasswordResponseSchema.parse(response.data);
   } catch (error: unknown) {
     if (error instanceof AxiosError && error.response) {
       return changePasswordErrorResponseSchema.parse(error.response.data);
     }
-    return { message: "Unknown error" };
+    return changePasswordErrorResponseSchema.parse({
+      message: error instanceof Error ? error.message : "Unknown error",
+    });
   }
 };
+
+export function isChangePasswordError(
+  res: changePasswordResponseT,
+): res is z.infer<typeof changePasswordErrorResponseSchema> {
+  // جرب نعمل parse بالـ success schema
+  const check = changePasswordSuccessResponseSchema.safeParse(res);
+  return !check.success; // لو فشل → يبقى Error
+}
