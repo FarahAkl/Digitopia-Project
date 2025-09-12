@@ -4,14 +4,17 @@ import { useAuth } from "../context/AuthContext";
 import { loginRequestSchema } from "../schema/auth/login.schema";
 import { Link } from "react-router";
 import { AxiosError } from "axios";
+import { forgetPasswordRequestSchema } from "../schema/auth/forgetPassword.schema";
+import { forgetPassword } from "../services/Auth/apiLogin";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loginLoading, setLoginLoading] = useState(false);
+  const [forgetLoading, setForgetLoading] = useState(false);
 
-  const auth =useAuth();
+  const auth = useAuth();
   // const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -27,7 +30,7 @@ export default function Login() {
     }
 
     try {
-      setLoading(true);
+      setLoginLoading(true);
       await auth?.login(email, password);
       setEmail("");
       setPassword("");
@@ -45,7 +48,37 @@ export default function Login() {
         setError("Unexpected error occurred.");
       }
     } finally {
-      setLoading(false);
+      setLoginLoading(false);
+    }
+  };
+
+  const handleForget = async () => {
+    setError(null);
+    const parsed = forgetPasswordRequestSchema.safeParse({ email });
+
+    if (!parsed.success) {
+      const firstError = parsed.error.issues?.at(0)?.message || "Invalid input";
+      setError(firstError);
+      return;
+    }
+
+    try {
+      setForgetLoading(true);
+      const res = await forgetPassword(parsed.data);
+      setEmail("");
+      setError(res.message); 
+      
+    } catch (err: unknown) {
+      if (err instanceof AxiosError) {
+        setError(
+          err?.status === 401 ? "Invalid Email" : "Failed. Please try again.",
+        );
+        console.log(err);
+      } else {
+        setError("Unexpected error occurred.");
+      }
+    } finally {
+      setForgetLoading(false);
     }
   };
 
@@ -71,13 +104,16 @@ export default function Login() {
       {error && <p className="text-sm text-red-500">{error}</p>}
       <button
         type="submit"
-        disabled={loading}
+        disabled={loginLoading}
         className="rounded bg-blue-600 py-2 text-white hover:bg-blue-700 disabled:opacity-50"
       >
-        {loading ? "Logging in..." : "Login"}
+        {loginLoading ? "Logging in..." : "Login"}
       </button>
       <Link to="/register">Register</Link>
       <Link to="/changePassword">Change Password</Link>
+      <button type="button" onClick={handleForget} disabled={forgetLoading}>
+        {forgetLoading ? "Sending..." : "Forget Password"}
+      </button>
     </form>
   );
 }

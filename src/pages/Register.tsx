@@ -109,7 +109,7 @@ export default function RegisterPage() {
           className="mb-1 w-full rounded border p-2"
           type="text"
           name="phoneNumber"
-          placeholder="Phone Number (Optional)"
+          placeholder="Phone Number"
           value={formData.phoneNumber}
           onChange={handleChange}
         />

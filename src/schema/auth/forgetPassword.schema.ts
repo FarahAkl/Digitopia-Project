@@ -12,7 +12,7 @@ export const forgetPasswordSuccessResponseSchema = z.object({
   message: z.string(),
 });
 
-const forgetPasswordResponseSchema = z.union([
+export const forgetPasswordResponseSchema = z.union([
   forgetPasswordSuccessResponseSchema,
   forgetPasswordErrorResponseSchema,
 ]);
