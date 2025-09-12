@@ -1,6 +1,6 @@
-import z from 'zod'
+import z from "zod";
 
-export const userResponseSchema = z.object({
+export const userSuccessResponseSchema = z.object({
   name: z.string().optional(),
   email: z.email().optional(),
   phoneNumber: z
@@ -11,5 +11,14 @@ export const userResponseSchema = z.object({
   role: z.enum(["user", "admin"]),
   profileImageUrl: z.url().optional(),
 });
+
+export const userErrorResponseSchema = z.object({
+  message: z.string(),
+});
+
+export const userResponseSchema = z.union([
+  userSuccessResponseSchema,
+  userErrorResponseSchema,
+]);
 
 export type UserResponseT = z.infer<typeof userResponseSchema>;
