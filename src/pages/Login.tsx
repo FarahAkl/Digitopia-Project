@@ -44,7 +44,6 @@ export default function Login() {
             ? "Invalid Email or Password"
             : "Login failed. Please try again.",
         );
-        console.log(err);
       } else {
         setError("Unexpected error occurred.");
       }
@@ -73,7 +72,6 @@ export default function Login() {
         setError(
           err?.status === 401 ? "Invalid Email" : "Failed. Please try again.",
         );
-        console.log(err);
       } else {
         setError("Unexpected error occurred.");
       }

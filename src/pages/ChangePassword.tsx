@@ -51,7 +51,6 @@ export default function ChangePassword() {
     } catch (err: unknown) {
       if (err instanceof AxiosError) {
         setError("Change password failed. Please try again.");
-        console.error(err);
       } else {
         setError("Unexpected error occurred.");
       }
