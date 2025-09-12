@@ -1,15 +1,12 @@
 import z from "zod";
 
 export const userSuccessResponseSchema = z.object({
-  name: z.string().optional(),
-  email: z.email().optional(),
-  phoneNumber: z
-    .string()
-    .regex(/^01[0-9]{9}$/, "Phone number must be a valid Egyptian number")
-    .optional(),
-  locations: z.array(z.string()).optional(),
-  role: z.enum(["user", "admin"]),
-  profileImageUrl: z.url().optional(),
+  name: z.string(),
+  email: z.email(),
+  phoneNumber: z.string(),
+  locations: z.array(z.string()),
+  role: z.string(),
+  profileImageUrl: z.string().optional(),
 });
 
 export const userErrorResponseSchema = z.object({
