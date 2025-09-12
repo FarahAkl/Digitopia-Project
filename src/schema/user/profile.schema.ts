@@ -4,13 +4,13 @@ export const userSuccessResponseSchema = z.object({
   name: z.string(),
   email: z.email(),
   phoneNumber: z.string(),
-  locations: z.array(z.string()),
+  locations: z.array(z.string()).default([]),
   role: z.string(),
   profileImageUrl: z.string().optional(),
 });
 
 export const userErrorResponseSchema = z.object({
-  message: z.string(),
+  message: z.string().optional().default("Unknown error"),
 });
 
 export const userResponseSchema = z.union([

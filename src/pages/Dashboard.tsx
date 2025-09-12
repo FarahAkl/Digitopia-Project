@@ -2,6 +2,7 @@ import { AxiosError } from "axios";
 import { deleteAccount } from "../services/Auth/apiDelete";
 import { useState } from "react";
 import { useAuth } from "../hooks/useAuth";
+import { Link } from "react-router";
 
 export default function Dashboard() {
   const { logout } = useAuth();
@@ -30,6 +31,7 @@ export default function Dashboard() {
         {loading ? "loading..." : "Delete Account"}
       </button>
       {error ? error : ""}
+      <Link to='/profile'>Profile</Link>
     </>
   );
 }
