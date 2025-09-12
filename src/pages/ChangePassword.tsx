@@ -3,6 +3,7 @@ import { changePassword } from "../services/Auth/apiChangePassword";
 import { changePasswordRequestSchema } from "../schema/auth/changePassword.schema";
 import { AxiosError } from "axios";
 import { Link } from "react-router";
+import { FadeLoader } from "react-spinners";
 
 export default function ChangePassword() {
   const [email, setEmail] = useState("");
@@ -58,6 +59,16 @@ export default function ChangePassword() {
       setLoading(false);
     }
   };
+
+  if (loading)
+    return (
+      <FadeLoader
+        color={"green"}
+        loading={loading}
+        aria-label="Loading Spinner"
+        data-testid="loader"
+      />
+    );
 
   return (
     <form

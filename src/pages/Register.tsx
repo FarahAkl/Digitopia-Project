@@ -1,6 +1,10 @@
 import { useState } from "react";
 import { register } from "../services/Auth/apiRegister";
-import { registerRequestSchema, type registerRequestT } from "../schema/auth/register.schema";
+import {
+  registerRequestSchema,
+  type registerRequestT,
+} from "../schema/auth/register.schema";
+import { FadeLoader } from "react-spinners";
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState<registerRequestT>({
@@ -23,12 +27,12 @@ export default function RegisterPage() {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-      e.preventDefault();
-      const cleanedData = {
-        ...formData,
-        profileImageUrl: formData.profileImageUrl || undefined,
-        location: formData.location || undefined,
-      };
+    e.preventDefault();
+    const cleanedData = {
+      ...formData,
+      profileImageUrl: formData.profileImageUrl || undefined,
+      location: formData.location || undefined,
+    };
 
     const parsed = registerRequestSchema.safeParse(cleanedData);
     if (!parsed.success) {
@@ -54,6 +58,16 @@ export default function RegisterPage() {
       setLoading(false);
     }
   };
+
+  if (loading)
+    return (
+      <FadeLoader
+        color={"green"}
+        loading={loading}
+        aria-label="Loading Spinner"
+        data-testid="loader"
+      />
+    );
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-100">

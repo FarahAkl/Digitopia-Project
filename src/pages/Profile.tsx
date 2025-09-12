@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { profileData } from "../services/User/apiProfile";
 import type { UserResponseT } from "../schema/user/profile.schema";
+import { FadeLoader } from "react-spinners";
 
 export default function Profile() {
   const [data, setData] = useState<UserResponseT | null>(null);
@@ -17,7 +18,16 @@ export default function Profile() {
     fetchProfile();
   }, []);
 
-  if (loading) return <p>Loading profile...</p>;
+  if (loading)
+    return (
+      <FadeLoader
+        color={"green"}
+        loading={loading}
+        aria-label="Loading Spinner"
+        data-testid="loader"
+      />
+    );
+
   if (!data) return null;
 
   // ✅ check if it's an error
