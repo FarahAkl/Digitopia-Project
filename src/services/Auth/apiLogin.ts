@@ -25,10 +25,12 @@ export const login = async (
     }
     return data;
   } catch (error: unknown) {
-    if (error instanceof AxiosError) {
-      console.error("Login failed:", error.response?.data || error.message);
+    if (error instanceof AxiosError && error.response) {
+      return loginResponseSchema.parse(error.response.data);
     }
-    throw error;
+    return loginResponseSchema.parse({
+      message: error instanceof Error ? error.message : "Unknown error",
+    });
   }
 };
 
