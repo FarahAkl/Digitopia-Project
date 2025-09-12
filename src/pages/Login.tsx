@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { useAuth } from "../context/AuthContext";
 // import { useNavigate } from "react-router";
 import { loginRequestSchema } from "../schema/auth/login.schema";
 import { Link } from "react-router";
 import { AxiosError } from "axios";
 import { forgetPasswordRequestSchema } from "../schema/auth/forgetPassword.schema";
 import { forgetPassword } from "../services/Auth/apiLogin";
+import { useAuth } from "../hooks/useAuth";
 
 export default function Login() {
   const [email, setEmail] = useState("");

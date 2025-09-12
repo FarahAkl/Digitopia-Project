@@ -7,9 +7,6 @@ import {
 } from "../../schema/auth/register.schema";
 import { AxiosError } from "axios";
 
-/**
- * Service function to register a new user
- */
 export const register = async (
   data: registerRequestT,
 ): Promise<registerResponseT> => {
