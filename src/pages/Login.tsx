@@ -1,5 +1,5 @@
 import { useState } from "react";
-// import { useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 import { loginRequestSchema } from "../schema/auth/login.schema";
 import { Link } from "react-router";
 import { AxiosError } from "axios";
@@ -15,7 +15,7 @@ export default function Login() {
   const [forgetLoading, setForgetLoading] = useState(false);
 
   const auth = useAuth();
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,7 +35,7 @@ export default function Login() {
       setEmail("");
       setPassword("");
 
-      // navigate("/dashboard");
+      navigate("/dashboard");
     } catch (err: unknown) {
       if (err instanceof AxiosError) {
         setError(

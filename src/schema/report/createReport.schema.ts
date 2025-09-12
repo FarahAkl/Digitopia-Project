@@ -37,7 +37,7 @@ export const createReportErrorResponseSchema = z.object({
   traceId: z.number(),
 });
 
-const createReportResponseSchema = z.union([
+export const createReportResponseSchema = z.union([
   createReportErrorResponseSchema,
   createReportSuccessResponseSchema,
 ]);

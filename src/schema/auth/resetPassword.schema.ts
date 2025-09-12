@@ -23,7 +23,7 @@ export const resetPasswordSuccessResponseSchema = z.object({
   message: z.string(),
 });
 
-const resetPasswordResponseSchema = z.union([
+export const resetPasswordResponseSchema = z.union([
   resetPasswordSuccessResponseSchema,
   resetPasswordErrorResponseSchema,
 ]);

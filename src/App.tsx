@@ -3,6 +3,8 @@ import { AuthProvider } from "./context/AuthContext";
 import Login from "./pages/Login";
 import Register from './pages/Register'
 import ChangePassword from "./pages/ChangePassword";
+import Dashboard from "./pages/Dashboard";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   return (
@@ -13,14 +15,14 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/changePassword" element={<ChangePassword/>}/>
           {/* <Route path="/logout" element={<Logout />} /> */}
-          {/* <Route
+          <Route
             path="/dashboard"
             element={
               <ProtectedRoute>
                 <Dashboard />
               </ProtectedRoute>
             }
-          /> */}
+          />
           <Route path="/" element={<Login />} />
         </Routes>
       </AuthProvider>
