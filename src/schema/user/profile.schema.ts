@@ -4,7 +4,7 @@ export const userSuccessResponseSchema = z.object({
   name: z.string(),
   email: z.email(),
   phoneNumber: z.string(),
-  locations: z.array(z.string()).default([]),
+  location: z.string().optional(),
   role: z.string(),
   profileImageUrl: z.string().optional(),
 });
