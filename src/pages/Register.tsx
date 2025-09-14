@@ -4,7 +4,7 @@ import {
   registerRequestSchema,
   type registerRequestT,
 } from "../schema/auth/register.schema";
-import { FadeLoader } from "react-spinners";
+import { Spinner } from "@heroui/react";
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState<registerRequestT>({
@@ -61,12 +61,7 @@ export default function RegisterPage() {
 
   if (loading)
     return (
-      <FadeLoader
-        color={"green"}
-        loading={loading}
-        aria-label="Loading Spinner"
-        data-testid="loader"
-      />
+      <Spinner/>
     );
 
   return (

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { profileData } from "../services/User/apiProfile";
 import type { UserResponseT } from "../schema/user/profile.schema";
-import { FadeLoader } from "react-spinners";
+import { Spinner } from "@heroui/react";
 
 export default function Profile() {
   const [data, setData] = useState<UserResponseT | null>(null);
@@ -18,15 +18,7 @@ export default function Profile() {
     fetchProfile();
   }, []);
 
-  if (loading)
-    return (
-      <FadeLoader
-        color={"green"}
-        loading={loading}
-        aria-label="Loading Spinner"
-        data-testid="loader"
-      />
-    );
+  if (loading) return <Spinner />;
 
   if (!data) return null;
 
@@ -59,14 +51,10 @@ export default function Profile() {
         <strong>Role:</strong> {data.role}
       </p>
 
-      {data.locations.length > 0 && (
+      {data.location && (
         <div className="mt-2">
           <strong>Locations:</strong>
-          <ul className="list-disc pl-6">
-            {data.locations.map((loc, idx) => (
-              <li key={idx}>{loc}</li>
-            ))}
-          </ul>
+          <p>{data.location}</p>
         </div>
       )}
     </div>
