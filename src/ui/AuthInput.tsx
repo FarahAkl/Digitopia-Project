@@ -7,7 +7,7 @@ export function AuthInput({
   onChange,
 }: {
   type?: string;
-  value: string;
+  value: string|undefined;
   placeholder: string;
   onChange: (val: string) => void;
 }) {
