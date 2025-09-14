@@ -6,7 +6,7 @@ import { AxiosError } from "axios";
 import { forgetPasswordRequestSchema } from "../schema/auth/forgetPassword.schema";
 import { forgetPassword } from "../services/Auth/apiLogin";
 import { useAuth } from "../hooks/useAuth";
-import {FadeLoader} from "react-spinners"
+import { Spinner } from "@heroui/react";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -83,12 +83,7 @@ export default function Login() {
   if (loginLoading || forgetLoading)
     return (
       <div className="flex h-screen items-center justify-center">
-        <FadeLoader
-          color={'green'}
-          loading={loginLoading || forgetLoading}
-          aria-label="Loading Spinner"
-          data-testid="loader"
-        />
+        <Spinner/>
       </div>
     );
 
