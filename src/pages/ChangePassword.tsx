@@ -3,7 +3,7 @@ import { changePassword } from "../services/Auth/apiChangePassword";
 import { changePasswordRequestSchema } from "../schema/auth/changePassword.schema";
 import { AxiosError } from "axios";
 import { Link } from "react-router";
-import { Spinner } from "@heroui/react";
+import { Button, Form, Input, Spinner } from "@heroui/react";
 
 export default function ChangePassword() {
   const [email, setEmail] = useState("");
@@ -62,25 +62,23 @@ export default function ChangePassword() {
   if (loading) return <Spinner />;
 
   return (
-    <form
+    <Form
       onSubmit={handleSubmit}
       className="mx-auto mt-10 flex w-80 flex-col gap-3"
     >
-      <input
+      <Input
         type="email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         placeholder="Enter your email"
         className="rounded border p-2"
       />
-      <input
-        type="password"
-        value={oldPassword}
+      <Input        
         onChange={(e) => setOldPassword(e.target.value)}
         placeholder="Enter your old password"
         className="rounded border p-2"
       />
-      <input
+      <Input
         type="password"
         value={newPassword}
         onChange={(e) => setNewPassword(e.target.value)}
@@ -91,15 +89,15 @@ export default function ChangePassword() {
       {error && <p className="text-sm text-red-500">{error}</p>}
       {success && <p className="text-sm text-green-600">{success}</p>}
 
-      <button
+      <Button
         type="submit"
         disabled={loading}
         className="rounded bg-blue-600 py-2 text-white hover:bg-blue-700 disabled:opacity-50"
       >
         {loading ? "Changing..." : "Change Password"}
-      </button>
+      </Button>
 
       <Link to="/login">Back to Login</Link>
-    </form>
+    </Form>
   );
 }
