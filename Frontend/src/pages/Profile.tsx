@@ -66,7 +66,7 @@ import { userResponseSchema, type UserResponseT } from "../schema/user/profile.s
 import { AxiosError } from "axios";
 import ProfileLoader from "../ui/ProfileLoader";
 import ProfileError from "../ui/ProfileError";
-import ProfileCard from "../ui/ProfileCard";
+// import ProfileCard from "../ui/ProfileCard";
 
 
 // ✅ type guard
