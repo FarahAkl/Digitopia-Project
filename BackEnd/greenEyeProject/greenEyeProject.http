@@ -1,0 +1,6 @@
+@greenEyeProject_HostAddress = http://localhost:5003
+
+GET {{greenEyeProject_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
