@@ -62,7 +62,7 @@
 // }
 import { useEffect, useState } from "react";
 import { profileData } from "../services/User/apiProfile";
-import { userResponseSchema, type UserResponseT } from "../schema/user/profile.schema";
+import { type UserResponseT } from "../schema/user/profile.schema";
 import { AxiosError } from "axios";
 import ProfileLoader from "../ui/ProfileLoader";
 import ProfileError from "../ui/ProfileError";
