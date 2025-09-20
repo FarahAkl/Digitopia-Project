@@ -7,6 +7,7 @@ import {
   useMap,
   useMapEvents,
 } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
 import type { LatLngExpression } from "leaflet";
 
 import styles from "./Map.module.css";
@@ -81,7 +82,7 @@ function DetectClick() {
 
   useMapEvents({
     click: (e) => {
-      navigate(`form?lat=${e.latlng.lat}&lng=${e.latlng.lng}`);
+      navigate(`lat=${e.latlng.lat}&lon=${e.latlng.lng}`);
     },
   });
     return null;

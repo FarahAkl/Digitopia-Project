@@ -3,6 +3,7 @@ import { deleteAccount } from "../services/Auth/apiDelete";
 import { useState } from "react";
 import { useAuth } from "../hooks/useAuth";
 import { Link } from "react-router";
+import Map from "../ui/Map";
 
 export default function Dashboard() {
   const { logout } = useAuth();
@@ -31,7 +32,8 @@ export default function Dashboard() {
         {loading ? "loading..." : "Delete Account"}
       </button>
       {error ? error : ""}
-      <Link to='/profile'>Profile</Link>
+      <Link to="/profile">Profile</Link>
+      <Map />
     </>
   );
 }
