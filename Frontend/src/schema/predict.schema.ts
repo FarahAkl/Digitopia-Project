@@ -1,21 +1,21 @@
 import z from "zod";
 
 export const predictRequestSchema = z.object({
-  lat: z.float64(),
-  lon: z.float64,
+  lat: z.number(),
+  lon: z.number(),
 });
 
 export const predictSuccessResponseSchema = z.object({
   clicked_point: {
-    lat: z.float64(),
-    lon: z.float64(),
+    lat: z.number(),
+    lon: z.number(),
   },
   nearest_data_point: {
-    lat: z.float64(),
-    lon: z.float64(),
-    distance_km: z.float64(),
+    lat: z.number(),
+    lon: z.number(),
+    distance_km: z.number(),
   },
-  predicted_ndvi: z.float64(),
+  predicted_ndvi: z.number(),
   desertification_level: z.string(),
   recommendations: z.array(z.string()),
 });
@@ -25,3 +25,4 @@ export const predictErrorResponseSchema = z.object({
 });
 
 export type predictRequestT = z.infer<typeof predictRequestSchema>
+export type predictSuccessT = z.infer<typeof predictSuccessResponseSchema>
