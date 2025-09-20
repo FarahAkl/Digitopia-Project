@@ -1,4 +1,4 @@
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import {
   MapContainer,
   // Marker,
@@ -25,7 +25,7 @@ export default function Map() {
   const [data, setData] = useState<predictSuccessT | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-
+  console.log(data, error, loading);
   const {
     isLoading: isLoadingPosition,
     position: geolocationPosition,
@@ -67,7 +67,7 @@ export default function Map() {
     if (geolocationPosition)
       setMapPosition([geolocationPosition.lat, geolocationPosition.lng]);
   }, [geolocationPosition]);
-  
+
   return (
     <div className={styles.mapContainer}>
       {!geolocationPosition && (
@@ -110,6 +110,7 @@ function ChangeCenter({ position }: { position: LatLngExpression }) {
 
 function DetectClick() {
   const [searchParams, setSearchParams] = useSearchParams();
+  console.log(searchParams)
 
   useMapEvents({
     click: (e) => {
