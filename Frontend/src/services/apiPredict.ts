@@ -1,5 +1,4 @@
 import {
-  predictErrorResponseSchema,
   predictRequestSchema,
   predictSuccessResponseSchema,
   type predictRequestT,
@@ -7,7 +6,6 @@ import {
 } from "../schema/predict.schema";
 
 export async function predict(body: predictRequestT): Promise<predictSuccessT> {
-  // ✅ validate request before sending
   const parsed = predictRequestSchema.parse(body);
 
   const response = await fetch(
@@ -22,10 +20,11 @@ export async function predict(body: predictRequestT): Promise<predictSuccessT> {
   const data = await response.json();
 
   if (!response.ok) {
-    const errData = predictErrorResponseSchema.parse(data);
-    throw new Error(errData.detail);
+    console.error("Server error:", data);
+    throw new Error(data?.detail || "Unexpected server error");
   }
 
-  // ✅ validate success response
+  console.log(data);
+
   return predictSuccessResponseSchema.parse(data);
 }

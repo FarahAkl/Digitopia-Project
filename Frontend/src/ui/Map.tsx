@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   MapContainer,
   // Marker,
@@ -15,10 +15,16 @@ import { useEffect, useState } from "react";
 // import { useCities } from "../contexts/CitiesContext";
 import { useGeolocation } from "../hooks/useGeolocation";
 import { useURLPosition } from "../hooks/useURLPosition";
+import { predict } from "../services/apiPredict";
+import type { predictSuccessT } from "../schema/predict.schema";
 
 export default function Map() {
   // const { cities } = useCities();
   const [mapPosition, setMapPosition] = useState<LatLngExpression>([30, 0]);
+  const [searchParams] = useSearchParams();
+  const [data, setData] = useState<predictSuccessT | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const {
     isLoading: isLoadingPosition,
@@ -28,6 +34,31 @@ export default function Map() {
 
   const [mapLat, mapLng] = useURLPosition();
 
+  const lat = searchParams.get("lat");
+  const lon = searchParams.get("lon");
+
+  useEffect(() => {
+    if (!lat || !lon) return;
+
+    const fetchPrediction = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const result = await predict({
+          lat: parseFloat(lat),
+          lon: parseFloat(lon),
+        });
+
+        setData(result);
+      } catch {
+        setError("Something went wrong");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchPrediction();
+  }, [lat, lon]);
+
   useEffect(() => {
     if (mapLat && mapLng) setMapPosition([+mapLat, +mapLng]);
   }, [mapLat, mapLng]);
@@ -36,7 +67,7 @@ export default function Map() {
     if (geolocationPosition)
       setMapPosition([geolocationPosition.lat, geolocationPosition.lng]);
   }, [geolocationPosition]);
-
+  
   return (
     <div className={styles.mapContainer}>
       {!geolocationPosition && (
@@ -78,12 +109,15 @@ function ChangeCenter({ position }: { position: LatLngExpression }) {
 }
 
 function DetectClick() {
-  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   useMapEvents({
     click: (e) => {
-      navigate(`lat=${e.latlng.lat}&lon=${e.latlng.lng}`);
+      setSearchParams({
+        lat: e.latlng.lat.toString(),
+        lon: e.latlng.lng.toString(),
+      });
     },
   });
-    return null;
+  return null;
 }
