@@ -3,9 +3,10 @@ import { Link, useNavigate } from "react-router";
 import { Button, Spinner } from "@heroui/react";
 import { loginRequestSchema } from "../schema/auth/login.schema";
 import { useAuth } from "../hooks/useAuth";
-import { AuthLayout } from "../ui/AppLayout";
 import { AuthForm } from "../ui/AuthForm";
 import { AuthInput } from "../ui/AuthInput";
+import AppLayout from "../ui/AppLayout";
+import Heading from "../ui/Heading";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -46,8 +47,9 @@ export default function Login() {
   }
 
   return (
-    <AuthLayout title="Login">
+    <AppLayout>
       <AuthForm onSubmit={handleSubmit}>
+        <Heading>Login Form</Heading>
         <AuthInput
           type="email"
           value={email}
@@ -60,6 +62,9 @@ export default function Login() {
           placeholder="Enter your password"
           onChange={setPassword}
         />
+        <Link to="forget" className="text-primary text-sm">
+          Forget Password?
+        </Link>
 
         {error && <p className="text-sm text-red-500">{error}</p>}
 
@@ -76,6 +81,6 @@ export default function Login() {
           </Link>
         </div>
       </AuthForm>
-    </AuthLayout>
+    </AppLayout>
   );
 }
