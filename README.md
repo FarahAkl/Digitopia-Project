@@ -1,69 +1,119 @@
-# React + TypeScript + Vite
+# Backend API
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+---
 
-Currently, two official plugins are available:
+## Table of Contents
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+1. [Authentication & Authorization](#authentication--authorization)
+2. [User Management](#user-management)
+3. [Notification System](#notification-system)
+4. [Database & Models Updates](#database--models-updates)
+5. [Seed Data](#seed-data)
+6. [API Endpoints](#api-endpoints)
+7. [Email Verification](#email-verification)
+8. [Swagger, JWT Integration & Live Demo](#swagger-jwt-integration--live-demo)
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Authentication & Authorization
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+* User login (Login) and registration (Register) using JWT.
+* User roles:
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+  * Admin for administrative tasks.
+  * User for personal access.
+* Password Change (ChangePassword) for users.
+* Email verification added for new users.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+---
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## User Management
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+* View and edit user profile:
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+  * GetProfile → View user information.
+  * EditProfile → Edit personal information, including Location (string).
+* Admin tasks:
+
+  * GetAllUsers → View all users and their Location.
+
+---
+
+## Notification System
+
+* Add notifications for users:
+
+  * Title → Notification title.
+  * Message → Notification text.
+  * CreatedAt → Creation time.
+  * IsRead → Read status.
+  * UserId → Target user.
+
+---
+
+## Database & Models Updates
+
+* Configured tables for Users and Notifications.
+* CreatedAt is automatically set (GETUTCDATE()).
+* One-to-Many relationships:
+
+  * Users ↔️ Notifications
+* Added email verification fields in Users table:
+
+  * IsEmailVerified → bool
+  * EmailVerificationToken → string
+  * EmailVerificationTokenExpiry → datetime
+
+---
+
+## Seed Data
+
+* Initial Roles: Admin, User.
+* Default Admin User:
+
+  * Name: System Admin
+  * Email: admin@greeneye.com
+  * Password: hashed for production (currently plain text for seed)
+  * Location: "Aga" (stored as a string field in the User entity)
+  * Profile Image: direct link to the image
+
+---
+
+## API Endpoints
+
+| Method | URL                      | Description                                              | Authorization    |
+| ------ | ------------------------ | -------------------------------------------------------- | ---------------- |
+| POST   | /api/Auth/Register       | Register a new user (sends verification email)           | No               |
+| POST   | /api/Auth/Login          | User login and receive JWT token                         | No               |
+| POST   | /api/Auth/Logout         | Logout user                                              | Yes (JWT)        |
+| POST   | /api/Auth/ForgotPassword | Request password reset link                              | No               |
+| POST   | /api/Auth/ResetPassword  | Reset password using token                               | No               |
+| DELETE | /api/Auth/DeleteAccount  | Delete user account                                      | Yes (JWT)        |
+| POST   | /api/Auth/ChangePassword | Change user password                                     | Yes (JWT)        |
+| GET    | /api/User/Profile        | Get current user profile                                 | Yes (JWT)        |
+| PUT    | /api/User/Profile        | Edit current user profile (including Location as string) | Yes (JWT)        |
+| GET    | /MyNotifications         | Get all notifications for current user                   | Yes (JWT)        |
+| PUT    | /MarkAsRead              | Mark specific notification(s) as read                    | Yes (JWT)        |
+| POST   | /Send                    | Send a notification (usually Admin only)                 | Yes (JWT)        |
+| GET    | /api/Admin/Users         | Get all users (Admin only)                               | Yes (JWT, Admin) |
+| GET    | /api/Auth/VerifyEmail    | Verify user email using token                            | No               |
+
+---
+
+## Email Verification
+
+* Flow:
+
+  1. User registers using /api/Auth/Register.
+  2. System sends verification email with unique token.
+  3. User clicks verification link: /api/Auth/VerifyEmail?token={token}&email={email}.
+  4. System sets IsEmailVerified = true if token is valid and not expired.
+
+---
+
+## Swagger, JWT Integration & Live Demo
+
+* Swagger integrated with JWT support.
+* All secured endpoints require a valid JWT token.
+* Enter the token in Swagger as: Bearer {your_token}.
+* Live Deployment / Demo: [Green Eye API Swagger](https://greenfootprint.runasp.net/Swagger/index.html)
