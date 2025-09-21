@@ -1,3 +1,4 @@
+import z from "zod";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { Button, Spinner } from "@heroui/react";
@@ -8,11 +9,13 @@ import { AuthInput } from "../ui/AuthInput";
 import AppLayout from "../ui/AppLayout";
 import Heading from "../ui/Heading";
 import { forgetPassword } from "../services/Auth/apiLogin";
+import { forgetPasswordRequestSchema } from "../schema/auth/forgetPassword.schema";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   const auth = useAuth();
@@ -21,6 +24,7 @@ export default function Login() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    setSuccess(null);
 
     const parsed = loginRequestSchema.safeParse({ email, password });
     if (!parsed.success) {
@@ -39,8 +43,23 @@ export default function Login() {
     }
   };
   const handleForgetPassword = async (): Promise<void> => {
-    const res = await forgetPassword({ email });
-    setError(res.message);
+    setError(null);
+    setSuccess(null);
+    try {
+      const parsed = forgetPasswordRequestSchema.parse({ email });
+      const res = await forgetPassword(parsed);
+      setSuccess(res.message);
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        // ❌ Validation error
+        setError(err?.issues[0].message);
+      } else if (err instanceof Error) {
+        // ❌ API/network error
+        setError(err.message);
+      } else {
+        setError("Something went wrong");
+      }
+    }
   };
 
   if (loading) {
@@ -76,6 +95,7 @@ export default function Login() {
         </button>
 
         {error && <p className="text-sm text-red-500">{error}</p>}
+        {success && <p className="text-sm text-green-500">{success}</p>}
 
         <Button type="submit" color="primary" className="w-full">
           Login
