@@ -7,6 +7,7 @@ import { AuthForm } from "../ui/AuthForm";
 import { AuthInput } from "../ui/AuthInput";
 import AppLayout from "../ui/AppLayout";
 import Heading from "../ui/Heading";
+import { forgetPassword } from "../services/Auth/apiLogin";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -37,6 +38,10 @@ export default function Login() {
       setLoading(false);
     }
   };
+  const handleForgetPassword = async (): Promise<void> => {
+    const res = await forgetPassword({ email });
+    setError(res.message);
+  };
 
   if (loading) {
     return (
@@ -62,9 +67,13 @@ export default function Login() {
           placeholder="Enter your password"
           onChange={setPassword}
         />
-        <Link to="forget" className="text-primary text-sm">
+        <button
+          type="button"
+          onClick={handleForgetPassword}
+          className="text-primary text-sm"
+        >
           Forget Password?
-        </Link>
+        </button>
 
         {error && <p className="text-sm text-red-500">{error}</p>}
 
