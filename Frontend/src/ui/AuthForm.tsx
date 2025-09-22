@@ -8,7 +8,10 @@ export function AuthForm({
   children: ReactNode;
 }) {
   return (
-    <form onSubmit={onSubmit} className="flex flex-col gap-3 py-20">
+    <form
+      onSubmit={onSubmit}
+      className="flex h-screen flex-col items-center gap-3 bg-white px-5 shadow-xl sm:w-full"
+    >
       {children}
     </form>
   );

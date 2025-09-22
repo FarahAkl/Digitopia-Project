@@ -72,6 +72,17 @@ export default function Login() {
 
   return (
     <AppLayout>
+      <div className="relative">
+        <img
+          src="/public/bg-login.png"
+          alt="bg-login"
+          className="h-full w-full object-cover"
+        />
+        <h2 className="absolute bottom-20 left-8 text-4xl font-bold text-amber-50 italic lg:bottom-36 lg:left-6 lg:text-6xl">
+          Welcome Back!
+        </h2>
+        <div className="absolute bottom-14 left-8 h-1.5 w-40 rounded-2xl bg-amber-50 lg:bottom-[7.25rem] lg:left-6 lg:w-48"></div>
+      </div>
       <AuthForm onSubmit={handleSubmit}>
         <Heading>Login Form</Heading>
         <AuthInput
@@ -89,13 +100,19 @@ export default function Login() {
         <button
           type="button"
           onClick={handleForgetPassword}
-          className="text-primary text-sm text-start"
+          className="text-primary text-start text-sm"
         >
           Forget Password?
         </button>
 
-        {error && <p className="text-sm text-red-500">{error}</p>}
-        {success && <p className="text-sm text-green-500">{success}</p>}
+        {error && (
+          <p className="w-full rounded-md bg-red-100 px-2 py-1 text-sm text-red-500">
+            {error}
+          </p>
+        )}
+        {success && (
+          <p className="bg-green-50 text-sm text-green-500">{success}</p>
+        )}
 
         <Button type="submit" color="primary" className="w-full">
           Login

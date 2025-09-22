@@ -5,7 +5,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
   return (
     <>
       <Header />
-      <div className="mx-auto mt-10 w-80 rounded-xl bg-white p-6 shadow">
+      <div className="grid h-[90vh] w-full grid-cols-1 overflow-hidden bg-amber-50 md:grid-cols-2">
         {children}
       </div>
     </>
