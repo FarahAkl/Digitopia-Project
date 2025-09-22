@@ -8,7 +8,7 @@ export function AuthForm({
   children: ReactNode;
 }) {
   return (
-    <form onSubmit={onSubmit} className="flex flex-col gap-3">
+    <form onSubmit={onSubmit} className="flex flex-col gap-3 py-20">
       {children}
     </form>
   );

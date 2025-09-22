@@ -89,7 +89,7 @@ export default function Login() {
         <button
           type="button"
           onClick={handleForgetPassword}
-          className="text-primary text-sm"
+          className="text-primary text-sm text-start"
         >
           Forget Password?
         </button>
