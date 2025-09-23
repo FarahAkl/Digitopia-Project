@@ -118,11 +118,11 @@ export default function Login() {
           Login
         </Button>
 
-        <div className="text-green-900">
+        <div className="mt-4 flex flex-col items-center gap-2 text-green-900">
           <span>or</span>
           <p>
             Don't have an account?{" "}
-            <Link to="/register" className="color-primary">
+            <Link to="/register" className="text-primary">
               Sign Up
             </Link>
             ...

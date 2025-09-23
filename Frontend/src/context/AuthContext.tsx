@@ -12,22 +12,21 @@ export type AuthContextT = {
   logout: () => void;
 };
 
-
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [token, setToken] = useState<string | null>(null);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const login = async (email: string, password: string) => {
     const data = await loginService({ email, password });
     if ("token" in data) {
       setToken(data.token);
       if (data.role === "User") {
-        navigate('/map')
+        navigate("/map");
       } else if (data.role === "Admin") {
-        navigate('/dashboard')
+        navigate("/dashboard");
       }
     } else {
-      throw new Error(data.message)
+      throw new Error(data.message);
     }
   };
 
@@ -42,4 +41,3 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     </AuthContext.Provider>
   );
 };
-
