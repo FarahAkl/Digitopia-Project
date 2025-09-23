@@ -100,7 +100,7 @@ export default function Login() {
         <button
           type="button"
           onClick={handleForgetPassword}
-          className="text-primary text-start text-sm"
+          className="text-primary w-full text-start py-2 text-sm"
         >
           Forget Password?
         </button>
@@ -114,17 +114,17 @@ export default function Login() {
           <p className="bg-green-50 text-sm text-green-500">{success}</p>
         )}
 
-        <Button type="submit" color="primary" className="w-full">
+        <Button
+          type="submit"
+          color="primary"
+          className="text-medium w-full border-2 border-lime-700"
+        >
           Login
         </Button>
 
-        <div className="flex justify-between text-sm">
-          <Link to="/register" className="text-blue-600 hover:underline">
-            Register
-          </Link>
-          <Link to="/changePassword" className="text-blue-600 hover:underline">
-            Change Password
-          </Link>
+        <div>
+          <span >or</span>
+          <p>Don't have an account? <Link to='/register'>Sign Up</Link>...</p>
         </div>
       </AuthForm>
     </AppLayout>

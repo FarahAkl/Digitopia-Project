@@ -79,12 +79,34 @@ export default function RegisterPage() {
 
       <AuthForm onSubmit={handleSubmit}>
         <Heading>SignUp Form</Heading>
+        <div>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) {
+                const url = URL.createObjectURL(file);
+                handleChange("profileImageUrl", url); // string
+              }
+            }}
+          />
+          {errors.profileImageUrl && (
+            <p className="w-full rounded-md bg-red-100 px-3 py-2 text-xs text-red-500">
+              {errors.profileImageUrl}
+            </p>
+          )}
+        </div>
         <AuthInput
           value={formData.name}
           placeholder="Name"
           onChange={(val) => handleChange("name", val)}
         />
-        {errors.name && <p className="text-xs text-red-500">{errors.name}</p>}
+        {errors.name && (
+          <p className="w-full rounded-md bg-red-100 px-3 py-2 text-xs text-red-500">
+            {errors.name}
+          </p>
+        )}
 
         <AuthInput
           type="email"
@@ -92,7 +114,11 @@ export default function RegisterPage() {
           placeholder="Email"
           onChange={(val) => handleChange("email", val)}
         />
-        {errors.email && <p className="text-xs text-red-500">{errors.email}</p>}
+        {errors.email && (
+          <p className="w-full rounded-md bg-red-100 px-3 py-2 text-xs text-red-500">
+            {errors.email}
+          </p>
+        )}
 
         <AuthInput
           type="password"
@@ -101,7 +127,9 @@ export default function RegisterPage() {
           onChange={(val) => handleChange("password", val)}
         />
         {errors.password && (
-          <p className="text-xs text-red-500">{errors.password}</p>
+          <p className="w-full rounded-md bg-red-100 px-3 py-2 text-xs text-red-500">
+            {errors.password}
+          </p>
         )}
 
         <AuthInput
@@ -110,17 +138,9 @@ export default function RegisterPage() {
           onChange={(val) => handleChange("phoneNumber", val)}
         />
         {errors.phoneNumber && (
-          <p className="text-xs text-red-500">{errors.phoneNumber}</p>
-        )}
-
-        <AuthInput
-          type="url"
-          value={formData.profileImageUrl}
-          placeholder="Profile Image URL (Optional)"
-          onChange={(val) => handleChange("profileImageUrl", val)}
-        />
-        {errors.profileImageUrl && (
-          <p className="text-xs text-red-500">{errors.profileImageUrl}</p>
+          <p className="w-full rounded-md bg-red-100 px-3 py-2 text-xs text-red-500">
+            {errors.phoneNumber}
+          </p>
         )}
 
         <AuthInput
@@ -129,13 +149,26 @@ export default function RegisterPage() {
           onChange={(val) => handleChange("location", val)}
         />
         {errors.location && (
-          <p className="text-xs text-red-500">{errors.location}</p>
+          <p className="w-full rounded-md bg-red-100 px-3 py-2 text-xs text-red-500">
+            {errors.location}
+          </p>
         )}
 
-        <Button type="submit" color="primary" className="w-full">
+        <Button
+          type="submit"
+          color="primary"
+          className="text-medium w-full border-2 border-lime-700"
+        >
           Sign Up
         </Button>
       </AuthForm>
+      <div>
+        <img
+          src="/bg-signup.png"
+          alt="bg-signup"
+          className="h-full w-full object-cover"
+        />
+      </div>
     </AppLayout>
   );
 }
