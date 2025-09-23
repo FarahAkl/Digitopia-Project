@@ -6,7 +6,7 @@ import axios, {
 import { deleteCookie, getCookie } from "../utils/TS-Cookie";
 
 const axiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
+  baseURL: "/",
   headers: {
     "Content-Type": "application/json",
     Accept: "application/json",
