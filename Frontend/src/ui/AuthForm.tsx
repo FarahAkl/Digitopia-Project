@@ -10,7 +10,7 @@ export function AuthForm({
   return (
     <form
       onSubmit={onSubmit}
-      className="flex h-screen flex-col items-center gap-3 bg-white px-5 shadow-xl sm:w-full"
+      className="relative flex h-screen flex-col items-center gap-3 bg-white px-5 shadow-xl sm:w-full"
     >
       {children}
     </form>

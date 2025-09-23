@@ -79,8 +79,18 @@ export default function RegisterPage() {
 
       <AuthForm onSubmit={handleSubmit}>
         <Heading>SignUp Form</Heading>
-        <div>
+        <div
+          onClick={() => document.getElementById("uploadImageInput")?.click()}
+          className="absolute top-14 right-3 z-40 flex h-30 w-30 items-center justify-center rounded-full border-4 border-green-600 bg-green-900 text-center lg:top-8"
+        >
+          <p className="text-xl font-semibold text-amber-50">
+            {!formData.profileImageUrl
+              ? "+ Upload Image"
+              : "+ Upload New Image"}
+          </p>
           <input
+            hidden
+            id="uploadImageInput"
             type="file"
             accept="image/*"
             onChange={(e) => {
@@ -91,11 +101,6 @@ export default function RegisterPage() {
               }
             }}
           />
-          {errors.profileImageUrl && (
-            <p className="w-full rounded-md bg-red-100 px-3 py-2 text-xs text-red-500">
-              {errors.profileImageUrl}
-            </p>
-          )}
         </div>
         <AuthInput
           value={formData.name}
@@ -162,7 +167,7 @@ export default function RegisterPage() {
           Sign Up
         </Button>
       </AuthForm>
-      <div>
+      <div className="hidden md:block">
         <img
           src="/bg-signup.png"
           alt="bg-signup"
