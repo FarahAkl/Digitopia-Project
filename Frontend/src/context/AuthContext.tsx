@@ -4,6 +4,7 @@ import {
   logout as logoutService,
 } from "../services/Auth/apiLogin";
 import { AuthContext } from "../hooks/useAuth";
+import { useNavigate } from "react-router";
 
 export type AuthContextT = {
   token: string | null;
@@ -14,11 +15,17 @@ export type AuthContextT = {
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [token, setToken] = useState<string | null>(null);
+  const navigate = useNavigate()
 
   const login = async (email: string, password: string) => {
     const data = await loginService({ email, password });
     if ("token" in data) {
       setToken(data.token);
+      if (data.role === "User") {
+        navigate('/map')
+      } else if (data.role === "Admin") {
+        navigate('/dashboard')
+      }
     } else {
       throw new Error(data.message)
     }

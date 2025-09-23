@@ -3,7 +3,7 @@ import { deleteAccount } from "../services/Auth/apiDelete";
 import { useState } from "react";
 import { useAuth } from "../hooks/useAuth";
 import { Link } from "react-router";
-import Map from "../ui/Map";
+import Map from "./Map";
 
 export default function Dashboard() {
   const { logout } = useAuth();

@@ -1,6 +1,6 @@
 import z from "zod";
 import { useState } from "react";
-import { Link, useNavigate } from "react-router";
+import { Link } from "react-router";
 import { Button, Spinner } from "@heroui/react";
 import { loginRequestSchema } from "../schema/auth/login.schema";
 import { useAuth } from "../hooks/useAuth";
@@ -19,7 +19,6 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
 
   const auth = useAuth();
-  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,7 +34,6 @@ export default function Login() {
     try {
       setLoading(true);
       await auth?.login(email, password);
-      navigate("/dashboard");
     } catch {
       setError("Invalid email or password");
     } finally {
@@ -51,10 +49,8 @@ export default function Login() {
       setSuccess(res.message);
     } catch (err) {
       if (err instanceof z.ZodError) {
-        // ❌ Validation error
         setError(err?.issues[0].message);
       } else if (err instanceof Error) {
-        // ❌ API/network error
         setError(err.message);
       } else {
         setError("Something went wrong");
@@ -100,7 +96,7 @@ export default function Login() {
         <button
           type="button"
           onClick={handleForgetPassword}
-          className="text-primary w-full text-start py-2 text-sm"
+          className="text-primary w-full py-2 text-start text-sm"
         >
           Forget Password?
         </button>
@@ -122,9 +118,15 @@ export default function Login() {
           Login
         </Button>
 
-        <div>
-          <span >or</span>
-          <p>Don't have an account? <Link to='/register'>Sign Up</Link>...</p>
+        <div className="text-green-900">
+          <span>or</span>
+          <p>
+            Don't have an account?{" "}
+            <Link to="/register" className="color-primary">
+              Sign Up
+            </Link>
+            ...
+          </p>
         </div>
       </AuthForm>
     </AppLayout>

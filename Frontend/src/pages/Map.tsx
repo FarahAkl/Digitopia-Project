@@ -12,14 +12,12 @@ import type { LatLngExpression } from "leaflet";
 
 import styles from "./Map.module.css";
 import { useEffect, useState } from "react";
-// import { useCities } from "../contexts/CitiesContext";
 import { useGeolocation } from "../hooks/useGeolocation";
 import { useURLPosition } from "../hooks/useURLPosition";
 import { predict } from "../services/apiPredict";
 import type { predictSuccessT } from "../schema/predict.schema";
 
 export default function Map() {
-  // const { cities } = useCities();
   const [mapPosition, setMapPosition] = useState<LatLngExpression>([30, 0]);
   const [searchParams] = useSearchParams();
   const [data, setData] = useState<predictSuccessT | null>(null);
@@ -85,16 +83,6 @@ export default function Map() {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png"
         />
-        {/* {cities?.map((city) => (
-          <Marker
-            position={[city.position.lat, city.position.lng]}
-            key={city.id}
-          >
-            <Popup>
-              <span>{city.emoji}</span> <span>{city.cityName}</span>
-            </Popup>
-          </Marker>
-        ))} */}
         <ChangeCenter position={mapPosition} />
         <DetectClick />
       </MapContainer>
