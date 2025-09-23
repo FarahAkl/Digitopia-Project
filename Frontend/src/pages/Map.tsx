@@ -1,16 +1,8 @@
 import { useSearchParams } from "react-router-dom";
-import {
-  MapContainer,
-  // Marker,
-  // Popup,
-  TileLayer,
-  useMap,
-  useMapEvents,
-} from "react-leaflet";
+import { MapContainer, TileLayer, useMap, useMapEvents } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import type { LatLngExpression } from "leaflet";
 
-import styles from "./Map.module.css";
 import { useEffect, useState } from "react";
 import { useGeolocation } from "../hooks/useGeolocation";
 import { useURLPosition } from "../hooks/useURLPosition";
@@ -23,7 +15,9 @@ export default function Map() {
   const [data, setData] = useState<predictSuccessT | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
   console.log(data, error, loading);
+
   const {
     isLoading: isLoadingPosition,
     position: geolocationPosition,
@@ -67,9 +61,13 @@ export default function Map() {
   }, [geolocationPosition]);
 
   return (
-    <div className={styles.mapContainer}>
+    <div className="relative h-screen flex-1">
       {!geolocationPosition && (
-        <button type="button" onClick={getPosition}>
+        <button
+          type="button"
+          onClick={getPosition}
+          className="bg-primary rounded-medium absolute bottom-5 mx-auto px-6 py-3 font-semibold text-amber-50"
+        >
           {isLoadingPosition ? "Loading..." : "Use your position"}
         </button>
       )}
@@ -77,7 +75,7 @@ export default function Map() {
         center={mapPosition}
         zoom={5}
         scrollWheelZoom={true}
-        className={styles.map}
+        className="h-full"
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -98,7 +96,7 @@ function ChangeCenter({ position }: { position: LatLngExpression }) {
 
 function DetectClick() {
   const [searchParams, setSearchParams] = useSearchParams();
-  console.log(searchParams)
+  console.log(searchParams);
 
   useMapEvents({
     click: (e) => {
