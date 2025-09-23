@@ -8,6 +8,7 @@ import { useGeolocation } from "../hooks/useGeolocation";
 import { useURLPosition } from "../hooks/useURLPosition";
 import { predict } from "../services/apiPredict";
 import type { predictSuccessT } from "../schema/predict.schema";
+import Header from "../ui/Header";
 
 export default function Map() {
   const [mapPosition, setMapPosition] = useState<LatLngExpression>([30, 0]);
@@ -62,11 +63,12 @@ export default function Map() {
 
   return (
     <div className="relative h-screen flex-1">
+      <Header />
       {!geolocationPosition && (
         <button
           type="button"
           onClick={getPosition}
-          className="bg-primary rounded-medium absolute bottom-5 mx-auto px-6 py-3 font-semibold text-amber-50"
+          className="bg-primary rounded-medium absolute bottom-5 left-1/2 z-[1000] -translate-x-1/2 cursor-pointer px-6 py-3 text-xl font-semibold text-amber-50 uppercase"
         >
           {isLoadingPosition ? "Loading..." : "Use your position"}
         </button>
