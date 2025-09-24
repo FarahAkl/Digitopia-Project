@@ -1,0 +1,13 @@
+import type { ReactNode } from "react";
+
+export default function Card({ children }: { children: ReactNode }) {
+  return (
+    <div className="relative flex min-h-[200px] w-full max-w-lg items-center justify-center overflow-hidden rounded-2xl shadow-xl">
+      <img
+        src="/card-bg.jpg"
+        className="absolute inset-0 h-full w-full object-cover"
+      />
+      {children}
+    </div>
+  );
+}

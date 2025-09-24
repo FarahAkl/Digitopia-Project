@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { Spinner } from "@heroui/react";
 import { profileData } from "../services/User/apiProfile";
 import type { UserResponseT } from "../schema/user/profile.schema";
+import Header from "../ui/Header";
+import ProfileCard from "../ui/ProfileCard";
 
 export default function Profile() {
   const [data, setData] = useState<UserResponseT | null>(null);
@@ -40,38 +42,11 @@ export default function Profile() {
   }
 
   return (
-    <div className="mx-auto mt-10 max-w-md rounded border p-4 shadow">
-      <h2 className="mb-4 text-xl font-bold">Profile</h2>
-
-      {data.profileImageUrl && (
-        <img
-          src={data.profileImageUrl}
-          alt={`${data.name}'s profile`}
-          className="mb-4 h-24 w-24 rounded-full object-cover"
-        />
-      )}
-
-      <p>
-        <strong>Name:</strong> {data.name}
-      </p>
-      <p>
-        <strong>Email:</strong> {data.email}
-      </p>
-      <p>
-        <strong>Phone:</strong> {data.phoneNumber}
-      </p>
-      <p>
-        <strong>Role:</strong> {data.role}
-      </p>
-
-      {data.location && (
-        <div className="mt-2">
-          <strong>Locations:</strong>
-          <ul className="list-inside list-disc">
-            <li>{data.location}</li>
-          </ul>
-        </div>
-      )}
-    </div>
+    <>
+      <Header />
+      <div className="h-[90vh] flex items-center justify-center bg-blue-50">
+        <ProfileCard data={data} />
+      </div>
+    </>
   );
 }
