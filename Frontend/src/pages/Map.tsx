@@ -13,9 +13,9 @@ import Header from "../ui/Header";
 export default function Map() {
   const [mapPosition, setMapPosition] = useState<LatLngExpression>([30, 0]);
   const [searchParams] = useSearchParams();
-  const [, setData] = useState<predictSuccessT | null>(null);
-  const [, setError] = useState<string | null>(null);
-  const [, setLoading] = useState(false);
+  const [data, setData] = useState<predictSuccessT | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const {
     isLoading: isLoadingPosition,
@@ -33,6 +33,7 @@ export default function Map() {
 
     const fetchPrediction = async () => {
       setLoading(true);
+      setData(null);
       setError(null);
       try {
         const result = await predict({
@@ -84,6 +85,27 @@ export default function Map() {
         <ChangeCenter position={mapPosition} />
         <DetectClick />
       </MapContainer>
+      <div
+        className={`absolute top-5 left-5 z-[2000] rounded p-3 shadow ${error ? "bg-red-100" : "bg-amber-50"}`}
+      >
+        {loading && <p>⏳ Loading prediction...</p>}
+        {error && <p className="text-red-500">❌ {error}</p>}
+        {data && (
+          <div className="text-green-900">
+            <p>
+              <strong>NDVI:</strong> {data.predicted_ndvi}
+            </p>
+            <p>
+              <strong>Desertification:</strong> {data.desertification_level}
+            </p>
+            <ul className="list-disc pl-5">
+              {data.recommendations.map((rec, i) => (
+                <li key={i}>{rec}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

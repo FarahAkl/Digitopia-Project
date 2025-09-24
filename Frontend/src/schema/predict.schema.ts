@@ -6,15 +6,15 @@ export const predictRequestSchema = z.object({
 });
 
 export const predictSuccessResponseSchema = z.object({
-  clicked_point: {
+  clicked_point: z.object({
     lat: z.number(),
     lon: z.number(),
-  },
-  nearest_data_point: {
+  }),
+  nearest_data_point: z.object({
     lat: z.number(),
     lon: z.number(),
     distance_km: z.number(),
-  },
+  }),
   predicted_ndvi: z.number(),
   desertification_level: z.string(),
   recommendations: z.array(z.string()),
