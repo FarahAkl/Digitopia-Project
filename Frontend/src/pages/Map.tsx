@@ -13,11 +13,9 @@ import Header from "../ui/Header";
 export default function Map() {
   const [mapPosition, setMapPosition] = useState<LatLngExpression>([30, 0]);
   const [searchParams] = useSearchParams();
-  const [data, setData] = useState<predictSuccessT | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-
-  console.log(data, error, loading);
+  const [, setData] = useState<predictSuccessT | null>(null);
+  const [, setError] = useState<string | null>(null);
+  const [, setLoading] = useState(false);
 
   const {
     isLoading: isLoadingPosition,
@@ -97,8 +95,7 @@ function ChangeCenter({ position }: { position: LatLngExpression }) {
 }
 
 function DetectClick() {
-  const [searchParams, setSearchParams] = useSearchParams();
-  console.log(searchParams);
+  const [, setSearchParams] = useSearchParams();
 
   useMapEvents({
     click: (e) => {
