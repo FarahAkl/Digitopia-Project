@@ -4,11 +4,12 @@ import {
   registerRequestSchema,
   type registerRequestT,
 } from "../schema/auth/register.schema";
-import { Spinner, Button } from "@heroui/react";
 import AppLayout from "../ui/AppLayout";
+import Heading from "../ui/Heading";
+import { Spinner, Button } from "@heroui/react";
 import { AuthForm } from "../ui/AuthForm";
 import { AuthInput } from "../ui/AuthInput";
-import Heading from "../ui/Heading";
+import { useNavigate } from "react-router";
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState<registerRequestT>({
@@ -20,9 +21,16 @@ export default function RegisterPage() {
     location: "",
   });
 
+  type ServerMessage = {
+    type: "success" | "error";
+    text: string;
+  } | null;
+
+  const navigate = useNavigate()
+
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
-  const [serverMessage, setServerMessage] = useState<string | null>(null);
+  const [serverMessage, setServerMessage] = useState<ServerMessage | null>(null);
 
   const handleChange = (key: keyof registerRequestT, value: string) => {
     setFormData((prev) => ({ ...prev, [key]: value }));
@@ -54,9 +62,14 @@ export default function RegisterPage() {
 
     try {
       const res = await register(parsed.data);
-      setServerMessage(res.message);
+      if (res.success) {
+        setServerMessage({ type: 'success', text: `✅ ${res.data.message}` });
+        navigate('/login')
+      } else {
+        setServerMessage({type:'error',text:`❌ ${res.error.message}`});
+      }
     } catch {
-      setServerMessage("Registration failed, please try again.");
+      setServerMessage({type:'error',text:"Registration failed, please try again."});
     } finally {
       setLoading(false);
     }
@@ -71,12 +84,6 @@ export default function RegisterPage() {
 
   return (
     <AppLayout>
-      {serverMessage && (
-        <div className="mb-3 text-center text-sm text-red-500">
-          {serverMessage}
-        </div>
-      )}
-
       <AuthForm onSubmit={handleSubmit}>
         <Heading>SignUp Form</Heading>
         <div
@@ -157,6 +164,18 @@ export default function RegisterPage() {
           <p className="w-full rounded-md bg-red-100 px-3 py-2 text-xs text-red-500">
             {errors.location}
           </p>
+        )}
+
+        {serverMessage && (
+          <div
+            className={`mb-3 w-full rounded-md py-2.5 text-center text-sm font-medium ${
+              serverMessage.type === "success"
+                ? "bg-green-100 text-green-600"
+                : "bg-red-100 text-red-500"
+            }`}
+          >
+            {serverMessage.text}
+          </div>
         )}
 
         <Button
