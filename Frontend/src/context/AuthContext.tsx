@@ -33,6 +33,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const logout = () => {
     logoutService();
     setToken(null);
+    navigate('/')
   };
 
   return (
