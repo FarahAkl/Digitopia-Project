@@ -20,11 +20,8 @@ export async function predict(body: predictRequestT): Promise<predictSuccessT> {
   const data = await response.json();
 
   if (!response.ok) {
-    console.error("Server error:", data);
     throw new Error(data?.detail || "Unexpected server error");
   }
-
-  console.log(data);
 
   return predictSuccessResponseSchema.parse(data);
 }

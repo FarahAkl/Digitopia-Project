@@ -9,6 +9,7 @@ import { useURLPosition } from "../hooks/useURLPosition";
 import { predict } from "../services/apiPredict";
 import type { predictSuccessT } from "../schema/predict.schema";
 import Header from "../ui/Header";
+import Prediciton from "../ui/Prediction";
 
 export default function Map() {
   const [mapPosition, setMapPosition] = useState<LatLngExpression>([30, 0]);
@@ -85,27 +86,7 @@ export default function Map() {
         <ChangeCenter position={mapPosition} />
         <DetectClick />
       </MapContainer>
-      <div
-        className={`absolute top-5 left-5 z-[2000] rounded p-3 shadow ${error ? "bg-red-100" : "bg-amber-50"}`}
-      >
-        {loading && <p>⏳ Loading prediction...</p>}
-        {error && <p className="text-red-500">❌ {error}</p>}
-        {data && (
-          <div className="text-green-900">
-            <p>
-              <strong>NDVI:</strong> {data.predicted_ndvi}
-            </p>
-            <p>
-              <strong>Desertification:</strong> {data.desertification_level}
-            </p>
-            <ul className="list-disc pl-5">
-              {data.recommendations.map((rec, i) => (
-                <li key={i}>{rec}</li>
-              ))}
-            </ul>
-          </div>
-        )}
-      </div>
+      <Prediciton data={data} error={error} loading={loading} />
     </div>
   );
 }
