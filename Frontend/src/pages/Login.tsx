@@ -33,9 +33,17 @@ export default function Login() {
 
     try {
       setLoading(true);
-      await auth?.login(email, password);
-    } catch {
-      setError("Invalid email or password");
+      setError(null);
+      const res = await auth?.login(email, password);
+      if (res) {
+        setError(res?.message || "Login failed, please try again.");
+      }
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Something went wrong");
+      }
     } finally {
       setLoading(false);
     }

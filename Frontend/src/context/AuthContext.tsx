@@ -8,7 +8,10 @@ import { useNavigate } from "react-router";
 
 export type AuthContextT = {
   token: string | null;
-  login: (email: string, password: string) => Promise<void>;
+  login: (
+    email: string,
+    password: string,
+  ) => Promise<{ message: string } | undefined>;
   logout: () => void;
 };
 
@@ -26,7 +29,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         navigate("/dashboard");
       }
     } else {
-      throw new Error(data.message);
+      return data
     }
   };
 
