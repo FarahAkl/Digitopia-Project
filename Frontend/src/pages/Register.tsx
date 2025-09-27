@@ -26,11 +26,13 @@ export default function RegisterPage() {
     text: string;
   } | null;
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
-  const [serverMessage, setServerMessage] = useState<ServerMessage | null>(null);
+  const [serverMessage, setServerMessage] = useState<ServerMessage | null>(
+    null,
+  );
 
   const handleChange = (key: keyof registerRequestT, value: string) => {
     setFormData((prev) => ({ ...prev, [key]: value }));
@@ -63,13 +65,16 @@ export default function RegisterPage() {
     try {
       const res = await register(parsed.data);
       if (res.success) {
-        setServerMessage({ type: 'success', text: `✅ ${res.data.message}` });
-        navigate('/login')
+        setServerMessage({ type: "success", text: `✅ ${res.data.message}` });
+        navigate("/login");
       } else {
-        setServerMessage({type:'error',text:`❌ ${res.error.message}`});
+        setServerMessage({ type: "error", text: `❌ ${res.error.message}` });
       }
     } catch {
-      setServerMessage({type:'error',text:"Registration failed, please try again."});
+      setServerMessage({
+        type: "error",
+        text: "Registration failed, please try again.",
+      });
     } finally {
       setLoading(false);
     }
@@ -91,9 +96,14 @@ export default function RegisterPage() {
           className="absolute top-14 right-3 z-40 flex h-30 w-30 items-center justify-center rounded-full border-4 border-green-600 bg-green-900 text-center lg:top-8"
         >
           <p className="text-xl font-semibold text-amber-50">
-            {!formData.profileImageUrl
-              ? "+ Upload Image"
-              : "+ Upload New Image"}
+            {!formData.profileImageUrl ? (
+              "+ Upload Image"
+            ) : (
+              <img
+                src={formData.profileImageUrl}
+                className="h-24 w-24 rounded-full"
+              />
+            )}
           </p>
           <input
             hidden
