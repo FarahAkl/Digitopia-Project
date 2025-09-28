@@ -57,10 +57,10 @@ export default function ResetPassword() {
   return (
     <>
       <Header />
-      <div className="flex h-[90vh] items-center justify-center bg-blue-50">
+      <div className="flex h-[90vh] w-full items-center justify-center bg-blue-50">
         <Card>
           <Heading>Reset Password</Heading>
-          <div className="mb-3 flex flex-col gap-2 [&_input]:w-full [&_input]:rounded-sm [&_input]:bg-blue-50 [&_input]:px-2 [&_input]:py-1">
+          <div className="mb-3 flex w-full flex-col gap-2 [&_input]:w-full [&_input]:rounded-sm [&_input]:bg-blue-50 [&_input]:px-2 [&_input]:py-1">
             <input
               type="password"
               value={newPassword}
