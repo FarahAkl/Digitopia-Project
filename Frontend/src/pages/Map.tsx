@@ -9,6 +9,22 @@ import {
 } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import type { LatLngExpression } from "leaflet";
+import L from "leaflet";
+import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
+import markerIcon from "leaflet/dist/images/marker-icon.png";
+import markerShadow from "leaflet/dist/images/marker-shadow.png";
+
+interface IconDefaultWithHack extends L.Icon.Default {
+  _getIconUrl?: () => string;
+}
+
+delete (L.Icon.Default.prototype as IconDefaultWithHack)._getIconUrl;
+
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: markerIcon2x,
+  iconUrl: markerIcon,
+  shadowUrl: markerShadow,
+});
 
 import { useEffect, useState } from "react";
 import { useGeolocation } from "../hooks/useGeolocation";
@@ -139,7 +155,7 @@ function LocationMarker() {
       <Marker position={position} />
       <Circle
         center={position}
-        radius={10000} 
+        radius={10000}
         pathOptions={{
           color: "green",
           fillColor: "lightgreen",
