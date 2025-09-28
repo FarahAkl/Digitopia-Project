@@ -16,19 +16,28 @@ namespace greenEyeProject.Services
     {
         private readonly AppDbContext _context;
         private readonly IConfiguration _configuration;
+        private readonly IWebHostEnvironment _env;
+        private readonly ILogger<AuthService> _logger;
 
-        public AuthService(AppDbContext context, IConfiguration configuration)
+        public AuthService(AppDbContext context, IConfiguration configuration, IWebHostEnvironment env, ILogger<AuthService> logger)
         {
             _context = context;
             _configuration = configuration;
+            _env = env;
+            _logger = logger;
         }
 
-    
+
         public async Task<string> RegisterAsync(RegisterRequestDto dto)
         {
+            // ✅ التحقق لو الإيميل مستخدم بالفعل
             if (await _context.Users.AnyAsync(u => u.Email == dto.Email))
-                throw new Exception("Email already exists.");
+            {
+                _logger.LogWarning("Registration failed: Email {Email} already exists.", dto.Email);
+                throw new InvalidOperationException("Email already exists.");
+            }
 
+            // ✅ تجهيز بيانات المستخدم الجديد
             var user = new User
             {
                 Name = dto.Name,
@@ -36,75 +45,223 @@ namespace greenEyeProject.Services
                 PhoneNumber = dto.PhoneNumber,
                 ProfileImageUrl = dto.ProfileImageUrl ?? "https://example.com/default-profile.png",
                 Location = dto.Location,
-                RoleId = 2,
+                RoleId = 2, // User role
                 CreatedAt = DateTime.UtcNow,
                 IsEmailVerified = false,
                 EmailVerificationToken = Guid.NewGuid().ToString(),
-                EmailVerificationTokenExpiry = DateTime.UtcNow.AddHours(24)
+                EmailVerificationTokenExpiry = DateTime.UtcNow.AddHours(24) // يفضل تجيب القيمة من AppSettings
             };
 
-            // 🔹 Hash the password before saving
+            // ✅ عمل Hash للباسورد
             var passwordHasher = new PasswordHasher<User>();
             user.PasswordHash = passwordHasher.HashPassword(user, dto.Password);
 
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
-
-            // 🔹 إرسال رابط التحقق للبريد
-            var verificationLink = $"{_configuration["AppSettings:FrontendUrl"]}/verify-email?token={user.EmailVerificationToken}&email={user.Email}";
-
-            // قراءة إعدادات SMTP
-            var smtpHost = _configuration["Smtp:Host"];
-            var smtpPort = int.Parse(_configuration["Smtp:Port"]);
-            var smtpEmail = _configuration["Smtp:Email"];
-            var smtpPassword = _configuration["Smtp:Password"];
-
-            var fromAddress = new MailAddress(smtpEmail, "GreenEye Support");
-            var toAddress = new MailAddress(user.Email);
-            string subject = "Verify your email - GreenEye";
-            string body = $"Hi {user.Name},\n\nPlease verify your email by clicking the link below:\n{verificationLink}\n\nThis link expires in 24 hours.";
-
-            using (var smtp = new SmtpClient(smtpHost, smtpPort))
+            try
             {
-                smtp.Credentials = new NetworkCredential(smtpEmail, smtpPassword);
-                smtp.EnableSsl = true;
+                _context.Users.Add(user);
+                await _context.SaveChangesAsync();
 
-                using (var message = new MailMessage(fromAddress, toAddress)
+                // ✅ تجهيز رابط التفعيل (Backend URL)
+                var verificationLink =
+                    $"{_configuration["AppSettings:BackendUrl"]}/api/auth/confirm-email?token={user.EmailVerificationToken}&email={user.Email}";
+
+                // ✅ إعدادات SMTP
+                var smtpHost = _configuration["Smtp:Host"];
+                var smtpPort = int.Parse(_configuration["Smtp:Port"]);
+                var smtpEmail = _configuration["Smtp:Email"];
+                var smtpPassword = _configuration["Smtp:Password"];
+
+                var fromAddress = new MailAddress(smtpEmail, "GreenEye Support");
+                var toAddress = new MailAddress(user.Email);
+                string subject = "Verify your email - GreenEye";
+                string body =
+                    $"Hi {user.Name},\n\nPlease verify your email by clicking the link below:\n{verificationLink}\n\nThis link expires in 24 hours.";
+
+                // ✅ إرسال الإيميل
+                using (var smtp = new SmtpClient(smtpHost, smtpPort))
                 {
-                    Subject = subject,
-                    Body = body
-                })
-                {
-                    await smtp.SendMailAsync(message);
+                    smtp.Credentials = new NetworkCredential(smtpEmail, smtpPassword);
+                    smtp.EnableSsl = true;
+
+                    using (var message = new MailMessage(fromAddress, toAddress)
+                    {
+                        Subject = subject,
+                        Body = body
+                    })
+                    {
+                        await smtp.SendMailAsync(message);
+                    }
                 }
-            }
 
-            return "User registered successfully! Please check your email to verify your account.";
+                _logger.LogInformation("User {Email} registered successfully. Verification email sent.", user.Email);
+
+                return "User registered successfully! Please check your email to verify your account.";
+            }
+            catch (SmtpException smtpEx)
+            {
+                _logger.LogError(smtpEx, "SMTP error while sending verification email to {Email}", user.Email);
+                throw new ApplicationException("Failed to send verification email. Please try again later.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error during registration for {Email}", user.Email);
+                throw;
+            }
         }
 
 
         public async Task<string> VerifyEmailAsync(string email, string token)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+            try
+            {
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
 
-            if (user == null)
-                throw new Exception("User not found");
+                if (user == null)
+                {
+                    _logger.LogWarning("Email verification failed: User with email {Email} not found.", email);
+                    throw new KeyNotFoundException("User not found.");
+                }
 
-            if (user.IsEmailVerified)
-                return "Email is already verified";
+                if (user.IsEmailVerified)
+                {
+                    _logger.LogInformation("User {Email} already verified. Redirecting to login.", email);
+                    return GetFrontendUrl("/login");
+                }
 
-            if (user.EmailVerificationToken != token || user.EmailVerificationTokenExpiry < DateTime.UtcNow)
-                throw new Exception("Invalid or expired verification token");
+                if (user.EmailVerificationToken != token || user.EmailVerificationTokenExpiry < DateTime.UtcNow)
+                {
+                    _logger.LogWarning("Invalid or expired verification token for user {Email}", email);
+                    throw new UnauthorizedAccessException("Invalid or expired verification token.");
+                }
 
-          
-            user.IsEmailVerified = true;
-            user.EmailVerificationToken = null;
-            user.EmailVerificationTokenExpiry = null;
+                // ✅ تحديث حالة المستخدم
+                user.IsEmailVerified = true;
+                user.EmailVerificationToken = null;
+                user.EmailVerificationTokenExpiry = null;
 
-            await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
 
-            return "Email verified successfully!";
+                _logger.LogInformation("User {Email} verified successfully.", email);
+
+                return GetFrontendUrl("/login");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error while verifying email {Email}", email);
+                throw;
+            }
         }
+
+
+        private string GetFrontendUrl(string path)
+        {
+            var frontendUrls = _configuration.GetSection("AppSettings:FrontendUrls").Get<string[]>();
+            if (frontendUrls == null || frontendUrls.Length == 0)
+            {
+                _logger.LogError("Frontend URLs are not configured.");
+                throw new ApplicationException("No FrontendUrls configured.");
+            }
+
+            string baseUrl;
+
+            if (_env.IsDevelopment())
+            {
+                baseUrl = frontendUrls.FirstOrDefault(u => u.Contains("localhost"))
+                          ?? frontendUrls.First();
+            }
+            else
+            {
+                baseUrl = frontendUrls.FirstOrDefault(u => !u.Contains("localhost"))
+                          ?? frontendUrls.First();
+            }
+
+            return $"{baseUrl}{path}";
+        }
+
+
+
+
+        //public async Task<string> RegisterAsync(RegisterRequestDto dto)
+        //{
+        //    if (await _context.Users.AnyAsync(u => u.Email == dto.Email))
+        //        throw new Exception("Email already exists.");
+
+        //    var user = new User
+        //    {
+        //        Name = dto.Name,
+        //        Email = dto.Email,
+        //        PhoneNumber = dto.PhoneNumber,
+        //        ProfileImageUrl = dto.ProfileImageUrl ?? "https://example.com/default-profile.png",
+        //        Location = dto.Location,
+        //        RoleId = 2,
+        //        CreatedAt = DateTime.UtcNow,
+        //        IsEmailVerified = false,
+        //        EmailVerificationToken = Guid.NewGuid().ToString(),
+        //        EmailVerificationTokenExpiry = DateTime.UtcNow.AddHours(24)
+        //    };
+
+        //    // 🔹 Hash the password before saving
+        //    var passwordHasher = new PasswordHasher<User>();
+        //    user.PasswordHash = passwordHasher.HashPassword(user, dto.Password);
+
+        //    _context.Users.Add(user);
+        //    await _context.SaveChangesAsync();
+
+        //    // 🔹 إرسال رابط التحقق للبريد
+        //    var verificationLink = $"{_configuration["AppSettings:FrontendUrl"]}/verify-email?token={user.EmailVerificationToken}&email={user.Email}";
+
+        //    // قراءة إعدادات SMTP
+        //    var smtpHost = _configuration["Smtp:Host"];
+        //    var smtpPort = int.Parse(_configuration["Smtp:Port"]);
+        //    var smtpEmail = _configuration["Smtp:Email"];
+        //    var smtpPassword = _configuration["Smtp:Password"];
+
+        //    var fromAddress = new MailAddress(smtpEmail, "GreenEye Support");
+        //    var toAddress = new MailAddress(user.Email);
+        //    string subject = "Verify your email - GreenEye";
+        //    string body = $"Hi {user.Name},\n\nPlease verify your email by clicking the link below:\n{verificationLink}\n\nThis link expires in 24 hours.";
+
+        //    using (var smtp = new SmtpClient(smtpHost, smtpPort))
+        //    {
+        //        smtp.Credentials = new NetworkCredential(smtpEmail, smtpPassword);
+        //        smtp.EnableSsl = true;
+
+        //        using (var message = new MailMessage(fromAddress, toAddress)
+        //        {
+        //            Subject = subject,
+        //            Body = body
+        //        })
+        //        {
+        //            await smtp.SendMailAsync(message);
+        //        }
+        //    }
+
+        //    return "User registered successfully! Please check your email to verify your account.";
+        //}
+
+
+        //public async Task<string> VerifyEmailAsync(string email, string token)
+        //{
+        //    var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+
+        //    if (user == null)
+        //        throw new Exception("User not found");
+
+        //    if (user.IsEmailVerified)
+        //        return "Email is already verified";
+
+        //    if (user.EmailVerificationToken != token || user.EmailVerificationTokenExpiry < DateTime.UtcNow)
+        //        throw new Exception("Invalid or expired verification token");
+
+
+        //    user.IsEmailVerified = true;
+        //    user.EmailVerificationToken = null;
+        //    user.EmailVerificationTokenExpiry = null;
+
+        //    await _context.SaveChangesAsync();
+
+        //    return "Email verified successfully!";
+        //}
 
 
 

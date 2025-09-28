@@ -22,36 +22,55 @@ namespace greenEyeProject.Controllers
             _authService = authService;
         }
 
-        // 🔹 POST: api/Auth/Register
-        [HttpPost("Register")]
+      
+
+        [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterRequestDto dto)
         {
-            try
-            {
-                var result = await _authService.RegisterAsync(dto);
-                return Ok(new { message = result });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
+            var result = await _authService.RegisterAsync(dto);
+            return Ok(result);
         }
 
-        
-        // 🔹 GET: api/Auth/VerifyEmail
-        [HttpGet("VerifyEmail")]
-        public async Task<IActionResult> VerifyEmail([FromQuery] string email, [FromQuery] string token)
+        [HttpGet("confirm-email")]
+        public async Task<IActionResult> ConfirmEmail(string email, string token)
         {
-            try
-            {
-                var result = await _authService.VerifyEmailAsync(email, token);
-                return Ok(new { message = result });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
+            var redirectUrl = await _authService.VerifyEmailAsync(email, token);
+            return Redirect(redirectUrl);
         }
+        
+
+
+
+        //// 🔹 POST: api/Auth/Register
+        //[HttpPost("Register")]
+        //public async Task<IActionResult> Register(RegisterRequestDto dto)
+        //{
+        //    try
+        //    {
+        //        var result = await _authService.RegisterAsync(dto);
+        //        return Ok(new { message = result });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return BadRequest(new { message = ex.Message });
+        //    }
+        //}
+
+
+        //// 🔹 GET: api/Auth/VerifyEmail
+        //[HttpGet("VerifyEmail")]
+        //public async Task<IActionResult> VerifyEmail([FromQuery] string email, [FromQuery] string token)
+        //{
+        //    try
+        //    {
+        //        var result = await _authService.VerifyEmailAsync(email, token);
+        //        return Ok(new { message = result });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return BadRequest(new { message = ex.Message });
+        //    }
+        //}
 
 
         //  POST: api/Auth/Login

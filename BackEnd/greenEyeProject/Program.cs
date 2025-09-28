@@ -44,7 +44,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new() { Title = "GreenEye API", Version = "v1" });
+    c.SwaggerDoc("v1", new() { Title = "greenfootprint API", Version = "v1" });
 
     // إعداد JWT Authentication في Swagger
     c.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
@@ -103,10 +103,53 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization();
 
+
+// =========================
+//  CORS
+// =========================
+var frontendUrls = builder.Configuration.GetSection("AppSettings:FrontendUrls").Get<string[]>();
+
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy.WithOrigins(frontendUrls)
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
+
+//builder.Services.AddCors(options =>
+//{
+//    options.AddPolicy("AllowFrontend", policy =>
+//    {
+//        policy.AllowAnyOrigin()
+//              .AllowAnyHeader()
+//              .AllowAnyMethod();
+//    });
+//});
+
+
+
+
+
 // =========================
 //  Build App
 // =========================
 var app = builder.Build();
+
+
+
+//if (app.Environment.IsDevelopment())
+//{
+//    Console.WriteLine("Running in Development mode");
+//}
+//else if (app.Environment.IsProduction())
+//{
+//    Console.WriteLine("Running in Production mode");
+//}
 
 // =========================
 //  Middleware Pipeline
@@ -115,7 +158,7 @@ app.UseSwagger();
 app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
-
+app.UseCors("AllowFrontend");
 app.UseAuthentication();
 app.UseAuthorization();
 
