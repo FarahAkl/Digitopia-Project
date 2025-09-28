@@ -20,9 +20,15 @@ export const registerRequestSchema = z.object({
   location: z.string().optional(),
 });
 
-export const registerResponseSchema = z.object({
+export const registerSuccessResponseSchema = z.string();
+export const registerErrorResponseSchema = z.object({
   message: z.string(),
 });
+
+export const registerResponseSchema = z.union([
+  registerErrorResponseSchema,
+  registerSuccessResponseSchema,
+]);
 
 export type registerResponseT = z.infer<typeof registerResponseSchema>;
 export type registerRequestT = z.infer<typeof registerRequestSchema>;

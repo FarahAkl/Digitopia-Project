@@ -4,12 +4,11 @@ import {
   registerRequestSchema,
   type registerRequestT,
 } from "../schema/auth/register.schema";
+import { Spinner, Button } from "@heroui/react";
 import AppLayout from "../ui/AppLayout";
 import Heading from "../ui/Heading";
-import { Spinner, Button } from "@heroui/react";
 import { AuthForm } from "../ui/AuthForm";
 import { AuthInput } from "../ui/AuthInput";
-import { useNavigate } from "react-router";
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState<registerRequestT>({
@@ -25,8 +24,6 @@ export default function RegisterPage() {
     type: "success" | "error";
     text: string;
   } | null;
-
-  const navigate = useNavigate();
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
@@ -65,10 +62,9 @@ export default function RegisterPage() {
     try {
       const res = await register(parsed.data);
       if (res.success) {
-        setServerMessage({ type: "success", text: `✅ ${res.data.message}` });
-        navigate("/login");
+        setServerMessage({ type: "success", text: `✅ ${res.data}` });
       } else {
-        setServerMessage({ type: "error", text: `❌ ${res.error.message}` });
+        setServerMessage({ type: "error", text: `❌ ${res.error}` });
       }
     } catch {
       setServerMessage({
