@@ -11,7 +11,7 @@
 5. [Seed Data](#seed-data)
 6. [API Endpoints](#api-endpoints)
 7. [Email Verification](#email-verification)
-8. [Reset Password](#Reset-Password-Flow)
+8. [Reset Password](#reset-password)
 9. [Swagger, JWT Integration & Live Demo](#swagger-jwt-integration--live-demo)
 
 ---
@@ -129,17 +129,26 @@
 
 * Flow:
 
-  1. User registers using /api/Auth/Register.
-  2. System generates a unique verification token with 24-hour expiry and sends it to the user's email.
-  3. User clicks verification link :/api/Auth/VerifyEmail?token={token}&email={email}.
-  4. API checks:
-     * If the user exists.
-     * If the email is not already verified.
-     * If the token matches and is not expired.
-  5. If valid → sets IsEmailVerified = true and clears the token + expiry.
-  6. User is then redirected automatically to the frontend login page.
+  1. User requests password reset → /api/Auth/ForgotPassword with their email.
+  2. System generates a ResetToken with 1-hour expiry and emails the reset link.
+  3. User clicks reset link → redirected to frontend reset-password page:
+     /reset-password?token={token}&email={email}
+  4. User enters:
+     * New password
+     * Confirm new password
+     (email + token are prefilled automatically from query string)
+  5. Frontend sends request to /api/Auth/ResetPassword with:
+     * email
+     * token
+     * new password
+  6. API validates:
+     * User exists.
+     * Token matches and not expired.
+  7. If valid → update password, clear token + expiry.
+  8. Return success message → frontend redirects to login.
 
 ---
+
 ## Swagger, JWT Integration & Live Demo
 
 * Swagger integrated with JWT support.
