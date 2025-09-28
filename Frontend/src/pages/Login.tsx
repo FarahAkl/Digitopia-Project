@@ -54,7 +54,11 @@ export default function Login() {
     try {
       const parsed = forgetPasswordRequestSchema.parse({ email });
       const res = await forgetPassword(parsed);
-      setSuccess(res.message);
+      if (res.success) {
+        setSuccess(res.data.message);
+      } else {
+        setError(res.error.message);
+      }
     } catch (err) {
       if (err instanceof z.ZodError) {
         setError(err?.issues[0].message);

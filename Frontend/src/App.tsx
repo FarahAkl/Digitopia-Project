@@ -10,6 +10,7 @@ import Map from "./pages/Map";
 import Home from "./pages/Home";
 import Contact from "./pages/Contact";
 import ResetPassword from "./pages/ResetPassword";
+import PageNotFound from "./pages/PageNotFound";
 
 function App() {
   return (
@@ -55,6 +56,7 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route path="*" element={<PageNotFound/>}/>
         </Routes>
       </AuthProvider>
     </BrowserRouter>

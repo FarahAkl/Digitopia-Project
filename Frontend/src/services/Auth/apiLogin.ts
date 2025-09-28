@@ -34,23 +34,32 @@ export const login = async (
   }
 };
 
+export type ForgetPasswordResult =
+  | { success: true; data: forgetPasswordResponseT }
+  | { success: false; error: forgetPasswordResponseT };
+
 export const forgetPassword = async (
   data: forgetPasswordRequestT,
-): Promise<forgetPasswordResponseT> => {
+): Promise<ForgetPasswordResult> => {
   try {
     const validData = forgetPasswordRequestSchema.parse(data);
     const response = await axiosInstance.post(
       "/api/Auth/ForgotPassword",
       validData,
     );
-    return forgetPasswordResponseSchema.parse(response.data);
+    const parsed = forgetPasswordResponseSchema.parse(response.data);
+    return { success: true, data: parsed };
   } catch (error: unknown) {
     if (error instanceof AxiosError && error.response) {
-      return forgetPasswordResponseSchema.parse(error.response.data);
+      const parsed = forgetPasswordResponseSchema.parse(error.response.data);
+      return { success: false, error: parsed };
     }
-    return forgetPasswordResponseSchema.parse({
-      message: error instanceof Error ? error.message : "Unknown error",
-    });
+    return {
+      success: false,
+      error: forgetPasswordResponseSchema.parse({
+        message: error instanceof Error ? error.message : "Unknown error",
+      }),
+    };
   }
 };
 
