@@ -1,31 +1,3 @@
-// import { AxiosError } from "axios";
-// import {
-//   resetPasswordResponseSchema,
-//   type changePasswordResponseT,
-//   type resetPasswordRequestT,
-// } from "../../schema/auth/resetPassword.schema";
-// import axiosInstance from "../axiosInstance";
-
-// export const resetPassword = async (
-//   resetData: resetPasswordRequestT,
-// ): Promise<changePasswordResponseT> => {
-//   try {
-//     const response = await axiosInstance.post(
-//       "/api/Auth/ResetPassword",
-//       resetData,
-//     );
-//     const data = resetPasswordResponseSchema.parse(response.data);
-//     return data;
-//   } catch (error: unknown) {
-//     if (error instanceof AxiosError && error.response) {
-//       return resetPasswordResponseSchema.parse(error.response.data);
-//     }
-//     return resetPasswordResponseSchema.parse({
-//       message: error instanceof Error ? error.message : "Unknown error",
-//     });
-//   }
-// };
-
 import {
   resetPasswordResponseSchema,
   type changePasswordResponseT,
@@ -50,7 +22,7 @@ export const resetPassword = async (
     const parsed = resetPasswordResponseSchema.parse(response.data);
 
     if (response.status >= 200 && response.status < 300) {
-      return { success: true, data: parsed };
+        return { success: true, data: parsed };
     } else {
       return { success: false, error: parsed };
     }

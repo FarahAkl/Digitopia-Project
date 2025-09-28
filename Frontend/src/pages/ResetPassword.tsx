@@ -6,7 +6,7 @@ import {
   resetPassword,
   type ResetPasswordResult,
 } from "../services/Auth/apiResetPass";
-import { useSearchParams } from "react-router";
+import { useNavigate, useSearchParams } from "react-router";
 import { Spinner } from "@heroui/react";
 
 export default function ResetPassword() {
@@ -15,6 +15,8 @@ export default function ResetPassword() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
   const [searchParams] = useSearchParams();
   const email = searchParams.get("email");
   const token = searchParams.get("token");
@@ -39,12 +41,18 @@ export default function ResetPassword() {
 
     if (result.success) {
       setSuccess(result.data.message);
+      navigate("/login");
     } else {
       setError(result.error.message);
     }
   };
 
-  if (loading) return <Spinner />;
+  if (loading)
+    return (
+      <div className="flex h-[100vh] items-center justify-center">
+        <Spinner />
+      </div>
+    );
 
   return (
     <>
@@ -66,8 +74,16 @@ export default function ResetPassword() {
               onChange={(e) => setConfirmPassword(e.target.value)}
             />
           </div>
-          {error && <p>{error}</p>}
-          {success && <p>{success}</p>}
+          {error && (
+            <p className="w-full rounded-md bg-red-100 px-2 py-1 text-sm text-red-500">
+              ❌ {error}
+            </p>
+          )}
+          {success && (
+            <p className="w-full rounded-md bg-green-50 px-2 py-1 text-sm text-green-500">
+              ✅ {success}
+            </p>
+          )}
           <button
             type="button"
             className="text-medium mb-4 w-full rounded-sm bg-green-900 py-1 font-semibold text-blue-50"
