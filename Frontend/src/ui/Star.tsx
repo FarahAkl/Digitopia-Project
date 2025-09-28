@@ -14,18 +14,11 @@ export default function Star({
   onHoverOut,
   color,
   size,
-}:IProps) {
-  const starStyle = {
-    width: `${size}px`,
-    height: `${size}px`,
-    cursor: "pointer",
-    display: "block",
-  };
-
+}: IProps) {
   return (
     <span
       role="button"
-      style={starStyle}
+      className={`w-[${size}px] h-[${size}px] block cursor-pointer`}
       onClick={onRate}
       onMouseEnter={onHoverIn}
       onMouseLeave={onHoverOut}
