@@ -75,12 +75,12 @@ export default function ResetPassword() {
             />
           </div>
           {error && (
-            <p className="w-full rounded-md bg-red-100 px-2 py-1 text-sm text-red-500">
+            <p className="w-full mb-1 rounded-md bg-red-100 px-2 py-1 text-sm text-red-500">
               ❌ {error}
             </p>
           )}
           {success && (
-            <p className="w-full rounded-md bg-green-50 px-2 py-1 text-sm text-green-500">
+            <p className="mb-1 w-full rounded-md bg-green-50 px-2 py-1 text-sm text-green-500">
               ✅ {success}
             </p>
           )}
