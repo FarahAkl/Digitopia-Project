@@ -11,7 +11,8 @@
 5. [Seed Data](#seed-data)
 6. [API Endpoints](#api-endpoints)
 7. [Email Verification](#email-verification)
-8. [Swagger, JWT Integration & Live Demo](#swagger-jwt-integration--live-demo)
+8. [Reset Password](#Reset-Password-Flow)
+9. [Swagger, JWT Integration & Live Demo](#swagger-jwt-integration--live-demo)
 
 ---
 
@@ -19,10 +20,12 @@
 
 * User login (Login) and registration (Register) using JWT.
 * User roles:
-
   * Admin for administrative tasks.
   * User for personal access.
 * Password Change (ChangePassword) for users.
+* Forgot / Reset Password flow implemented:
+  * ForgotPassword → sends reset link to user's email.
+  * ResetPassword → validates token and updates password.
 * Email verification added for new users.
 
 ---
@@ -63,6 +66,11 @@
   * IsEmailVerified → bool
   * EmailVerificationToken → string
   * EmailVerificationTokenExpiry → datetime
+    
+* Added reset password fields in Users table:
+  
+  * ResetToken → string
+  * ResetTokenExpiry → datetime
 
 ---
 
@@ -87,8 +95,8 @@
 | GET    | /api/Auth/VerifyEmail    | Verify user email using token + email, then redirect to login | No               |
 | POST   | /api/Auth/Login          | User login and receive JWT token                              | No               |
 | POST   | /api/Auth/Logout         | Logout user                                                   | Yes (JWT)        |
-| POST   | /api/Auth/ForgotPassword | Request password reset link                                   | No               |
-| POST   | /api/Auth/ResetPassword  | Reset password using token                                    | No               |
+| POST   | /api/Auth/ForgotPassword | Request password reset link(sends email with reset link & token)| No               |
+| POST   | /api/Auth/ResetPassword  | Reset password using token (user provides new password + confirm)| No               |
 | DELETE | /api/Auth/DeleteAccount  | Delete user account                                           | Yes (JWT)        |
 | POST   | /api/Auth/ChangePassword | Change user password                                          | Yes (JWT)        |
 | GET    | /api/User/Profile        | Get current user profile                                      | Yes (JWT)        |
@@ -117,6 +125,21 @@
 
 ---
 
+## Reset Password
+
+* Flow:
+
+  1. User registers using /api/Auth/Register.
+  2. System generates a unique verification token with 24-hour expiry and sends it to the user's email.
+  3. User clicks verification link :/api/Auth/VerifyEmail?token={token}&email={email}.
+  4. API checks:
+     * If the user exists.
+     * If the email is not already verified.
+     * If the token matches and is not expired.
+  5. If valid → sets IsEmailVerified = true and clears the token + expiry.
+  6. User is then redirected automatically to the frontend login page.
+
+---
 ## Swagger, JWT Integration & Live Demo
 
 * Swagger integrated with JWT support.
