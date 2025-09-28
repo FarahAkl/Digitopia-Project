@@ -1,4 +1,5 @@
-﻿using greenEyeProject.DTOs.Auth_DTOs;
+﻿using FirebaseAdmin.Messaging;
+using greenEyeProject.DTOs.Auth_DTOs;
 using greenEyeProject.Models;
 using greenEyeProject.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -27,10 +28,18 @@ namespace greenEyeProject.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterRequestDto dto)
         {
-            var result = await _authService.RegisterAsync(dto);
-            return Ok(result);
+            try
+            {
+                var result = await _authService.RegisterAsync(dto);
+                return Ok(new {message = result});
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
-            
+
+
         [HttpGet("VerifyEmail")]
         public async Task<IActionResult> ConfirmEmail(string email, string token)
         {
@@ -38,39 +47,6 @@ namespace greenEyeProject.Controllers
             return Redirect(redirectUrl);
         }
         
-
-
-
-        //// 🔹 POST: api/Auth/Register
-        //[HttpPost("Register")]
-        //public async Task<IActionResult> Register(RegisterRequestDto dto)
-        //{
-        //    try
-        //    {
-        //        var result = await _authService.RegisterAsync(dto);
-        //        return Ok(new { message = result });
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return BadRequest(new { message = ex.Message });
-        //    }
-        //}
-
-
-        //// 🔹 GET: api/Auth/VerifyEmail
-        //[HttpGet("VerifyEmail")]
-        //public async Task<IActionResult> VerifyEmail([FromQuery] string email, [FromQuery] string token)
-        //{
-        //    try
-        //    {
-        //        var result = await _authService.VerifyEmailAsync(email, token);
-        //        return Ok(new { message = result });
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return BadRequest(new { message = ex.Message });
-        //    }
-        //}
 
 
         //  POST: api/Auth/Login
