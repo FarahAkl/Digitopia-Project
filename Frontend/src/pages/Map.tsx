@@ -9,30 +9,15 @@ import {
 } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import type { LatLngExpression } from "leaflet";
-import L from "leaflet";
-import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
-import markerIcon from "leaflet/dist/images/marker-icon.png";
-import markerShadow from "leaflet/dist/images/marker-shadow.png";
-
-interface IconDefaultWithHack extends L.Icon.Default {
-  _getIconUrl?: () => string;
-}
-
-delete (L.Icon.Default.prototype as IconDefaultWithHack)._getIconUrl;
-
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: markerIcon2x,
-  iconUrl: markerIcon,
-  shadowUrl: markerShadow,
-});
 
 import { useEffect, useState } from "react";
+import Header from "../ui/Header";
+import Prediciton from "../ui/Prediction";
 import { useGeolocation } from "../hooks/useGeolocation";
 import { useURLPosition } from "../hooks/useURLPosition";
 import { predict } from "../services/apiPredict";
 import type { predictSuccessT } from "../schema/predict.schema";
-import Header from "../ui/Header";
-import Prediciton from "../ui/Prediction";
+import { useLeafletFix } from "../hooks/useLeafletFix";
 
 export default function Map() {
   const [mapPosition, setMapPosition] = useState<LatLngExpression>([30, 0]);
@@ -40,6 +25,8 @@ export default function Map() {
   const [data, setData] = useState<predictSuccessT | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  useLeafletFix();
 
   const {
     isLoading: isLoadingPosition,
@@ -97,7 +84,6 @@ export default function Map() {
         </button>
       )}
       <MapContainer
-        // center={mapPosition}
         center={[26.8206, 30.8025]}
         zoom={5}
         scrollWheelZoom={true}
