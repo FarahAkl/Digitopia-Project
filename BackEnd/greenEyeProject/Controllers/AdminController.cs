@@ -7,7 +7,7 @@ namespace greenEyeProject.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize(Roles = "Admin")] // ✅ كل الأكشنات هنا للأدمن بس
+    [Authorize(Roles = "Admin")] 
     public class AdminController : ControllerBase
     {
         private readonly IAdminService _adminService;
@@ -18,7 +18,7 @@ namespace greenEyeProject.Controllers
            
         }
 
-        // 📌 Get all users
+       
         [HttpGet("Users")]
         public async Task<IActionResult> GetAllUsers()
         {

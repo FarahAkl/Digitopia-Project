@@ -30,14 +30,12 @@ namespace greenEyeProject.Services
 
         public async Task<string> RegisterAsync(RegisterRequestDto dto)
         {
-            // ✅ التحقق لو الإيميل مستخدم بالفعل
             if (await _context.Users.AnyAsync(u => u.Email == dto.Email))
             {
                 _logger.LogWarning("Registration failed: Email {Email} already exists.", dto.Email);
                 throw new InvalidOperationException("Email already exists.");
             }
 
-            // ✅ تجهيز بيانات المستخدم الجديد
             var user = new User
             {
                 Name = dto.Name,
@@ -49,10 +47,10 @@ namespace greenEyeProject.Services
                 CreatedAt = DateTime.UtcNow,
                 IsEmailVerified = false,
                 EmailVerificationToken = Guid.NewGuid().ToString(),
-                EmailVerificationTokenExpiry = DateTime.UtcNow.AddHours(24) // يفضل تجيب القيمة من AppSettings
+                EmailVerificationTokenExpiry = DateTime.UtcNow.AddHours(24) 
             };
 
-            // ✅ عمل Hash للباسورد
+           
             var passwordHasher = new PasswordHasher<User>();
             user.PasswordHash = passwordHasher.HashPassword(user, dto.Password);
 
@@ -61,11 +59,9 @@ namespace greenEyeProject.Services
                 _context.Users.Add(user);
                 await _context.SaveChangesAsync();
 
-                // ✅ تجهيز رابط التفعيل (Backend URL)
                 var verificationLink =
                     $"{_configuration["AppSettings:BackendUrl"]}/api/auth/VerifyEmail?token={user.EmailVerificationToken}&email={user.Email}";
 
-                // ✅ إعدادات SMTP
                 var smtpHost = _configuration["Smtp:Host"];
                 var smtpPort = int.Parse(_configuration["Smtp:Port"]);
                 var smtpEmail = _configuration["Smtp:Email"];
@@ -77,7 +73,6 @@ namespace greenEyeProject.Services
                 string body =
                     $"Hi {user.Name},\n\nPlease verify your email by clicking the link below:\n{verificationLink}\n\nThis link expires in 24 hours.";
 
-                // ✅ إرسال الإيميل
                 using (var smtp = new SmtpClient(smtpHost, smtpPort))
                 {
                     smtp.Credentials = new NetworkCredential(smtpEmail, smtpPassword);
@@ -134,7 +129,6 @@ namespace greenEyeProject.Services
                     throw new UnauthorizedAccessException("Invalid or expired verification token.");
                 }
 
-                // ✅ تحديث حالة المستخدم
                 user.IsEmailVerified = true;
                 user.EmailVerificationToken = null;
                 user.EmailVerificationTokenExpiry = null;
@@ -191,18 +185,15 @@ namespace greenEyeProject.Services
             if (user == null)
                 throw new Exception("Invalid email or password");
 
-            // 🔹 Check if email is verified
             if (!user.IsEmailVerified)
                 throw new Exception("Please verify your email before logging in");
 
-            // 🔹 Verify hashed password
             var passwordHasher = new PasswordHasher<User>();
             var result = passwordHasher.VerifyHashedPassword(user, user.PasswordHash, dto.Password);
 
             if (result == PasswordVerificationResult.Failed)
                 throw new Exception("Invalid email or password");
 
-            // 🔹 Generate JWT token
             var token = GenerateJwtToken(user);
 
             return new AuthResponseDto
@@ -226,20 +217,17 @@ namespace greenEyeProject.Services
         public async Task<string> DeleteAccountAsync(int userId)
         {
             var user = await _context.Users
-                .Include(u => u.Reports) // بس محتاج بس الـ Reports المرتبطة بالمستخدم
+                .Include(u => u.Reports) 
                 .FirstOrDefaultAsync(u => u.UserId == userId);
 
             if (user == null)
                 throw new Exception("User not found");
 
-            // حذف تقارير المستخدم
             _context.Reports.RemoveRange(user.Reports);
 
-            // حذف الإشعارات المرتبطة
             var notifications = _context.Notifications.Where(n => n.UserId == userId);
             _context.Notifications.RemoveRange(notifications);
 
-            // حذف المستخدم نفسه
             _context.Users.Remove(user);
 
             await _context.SaveChangesAsync();
@@ -266,20 +254,18 @@ namespace greenEyeProject.Services
 
 
 
-        // 🔹 Forgot Password
+        //  Forgot Password
         public async Task<string> ForgotPasswordAsync(string email)
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
             if (user == null)
                 throw new Exception("This email is not registered");
 
-            // 1️⃣ إنشاء Reset Token جديد
             var token = Guid.NewGuid().ToString();
             user.ResetToken = token;
             user.ResetTokenExpiry = DateTime.UtcNow.AddHours(1);
             await _context.SaveChangesAsync();
 
-            // 2️⃣ تحديد الـ FrontendUrl المناسب من الـ appsettings
             var frontendUrls = _configuration.GetSection("AppSettings:FrontendUrls").Get<string[]>();
             var backendUrl = _configuration.GetValue<string>("AppSettings:BackendUrl");
 
@@ -295,10 +281,8 @@ namespace greenEyeProject.Services
 
             frontendUrl ??= frontendUrls.First();
 
-            // 3️⃣ تعديل اللينك → يوجّه للـ Frontend
             var resetLink = $"{frontendUrl}/resetPassword?token={WebUtility.UrlEncode(token)}&email={user.Email}";
 
-            // 4️⃣ إعدادات الإيميل
             var smtpHost = _configuration["Smtp:Host"];
             var smtpPort = int.Parse(_configuration["Smtp:Port"]);
             var smtpEmail = _configuration["Smtp:Email"];
@@ -329,22 +313,19 @@ namespace greenEyeProject.Services
             return "Password reset link has been sent to your email";
         }
 
-        // 🔹 Reset Password
+        //  Reset Password
         public async Task<string> ResetPasswordAsync(ResetPasswordRequestDto dto)
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == dto.Email);
             if (user == null)
                 throw new Exception("This email is not registered");
 
-            //  التحقق من صلاحية التوكن
             if (user.ResetToken != dto.Token || user.ResetTokenExpiry < DateTime.UtcNow)
                 throw new Exception("Invalid or expired reset token");
 
-            //  تحديث الباسورد
             var passwordHasher = new PasswordHasher<User>();
             user.PasswordHash = passwordHasher.HashPassword(user, dto.NewPassword);
 
-            // إلغاء التوكن بعد الاستخدام
             user.ResetToken = null;
             user.ResetTokenExpiry = null;
 
@@ -354,76 +335,7 @@ namespace greenEyeProject.Services
         }
 
 
-        //// 🔹 Forgot Password
-        //public async Task<string> ForgotPasswordAsync(string email)
-        //{
-        //    var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
-        //    if (user == null)
-        //        throw new Exception("This email is not registered");
-
-        //    // 1️⃣ إنشاء Reset Token جديد
-        //    var token = Guid.NewGuid().ToString();
-        //    user.ResetToken = token;
-        //    user.ResetTokenExpiry = DateTime.UtcNow.AddHours(1);
-        //    await _context.SaveChangesAsync();
-
-        //    // 2️⃣ تعديل اللينك → يوجّه للـ Frontend (مش للـ Backend)
-        //    var resetLink = $"{_configuration["AppSettings:FrontendUrls"]}/resetPassword?token={WebUtility.UrlEncode(token)}&email={user.Email}";
-
-        //    // 3️⃣ إعدادات الإيميل
-        //    var smtpHost = _configuration["Smtp:Host"];
-        //    var smtpPort = int.Parse(_configuration["Smtp:Port"]);
-        //    var smtpEmail = _configuration["Smtp:Email"];
-        //    var smtpPassword = _configuration["Smtp:Password"];
-
-        //    var fromAddress = new MailAddress(smtpEmail, "Supporter");
-        //    var toAddress = new MailAddress(user.Email);
-        //    string subject = "Password Reset - GreenEye";
-        //    string body = $"Click the link below to reset your password:\n{resetLink}";
-
-        //    using (var smtp = new SmtpClient(smtpHost, smtpPort))
-        //    {
-        //        smtp.Credentials = new NetworkCredential(smtpEmail, smtpPassword);
-        //        smtp.EnableSsl = true;
-
-        //        using (var message = new MailMessage(fromAddress, toAddress)
-        //        {
-        //            Subject = subject,
-        //            Body = body
-        //        })
-        //        {
-        //            await smtp.SendMailAsync(message);
-        //        }
-        //    }
-
-        //    return "Password reset link has been sent to your email";
-        //}
-
-        //// 🔹 Reset Password
-        //public async Task<string> ResetPasswordAsync(ResetPasswordRequestDto dto)
-        //{
-        //    var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == dto.Email);
-        //    if (user == null)
-        //        throw new Exception("This email is not registered");
-
-        //    // 4️⃣ التحقق من صلاحية التوكن
-        //    if (user.ResetToken != dto.Token || user.ResetTokenExpiry < DateTime.UtcNow)
-        //        throw new Exception("Invalid or expired reset token");
-
-        //    // 5️⃣ تحديث الباسورد
-        //    var passwordHasher = new PasswordHasher<User>();
-        //    user.PasswordHash = passwordHasher.HashPassword(user, dto.NewPassword);
-
-        //    // 6️⃣ إلغاء التوكن بعد الاستخدام
-        //    user.ResetToken = null;
-        //    user.ResetTokenExpiry = null;
-
-        //    await _context.SaveChangesAsync();
-
-        //    return "Password has been reset successfully";
-        //}
-
-        // 🔹 Generate JWT token (لا حاجة لتعديل هنا)
+        //  Generate JWT token
         private string GenerateJwtToken(User user)
         {
             var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]);

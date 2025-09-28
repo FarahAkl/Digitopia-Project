@@ -7,11 +7,11 @@ namespace greenEyeProject.Models
         public int NotificationId { get; set; }
 
         [Required]
-        public string Message { get; set; }   // نص الإشعار
+        public string Message { get; set; }   
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-        public bool IsRead { get; set; } = false;  // هل اليوزر فتح الإشعار؟
+        public bool IsRead { get; set; } = false; 
 
         // FK
         public int UserId { get; set; }

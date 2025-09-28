@@ -86,7 +86,7 @@ namespace greenEyeProject.Controllers
         }
 
 
-        // 🔹 DELETE: api/Auth/DeleteAccount
+        //  DELETE: api/Auth/DeleteAccount
         [HttpDelete("DeleteAccount")]
         [Authorize]
         public async Task<IActionResult> DeleteAccount()
@@ -125,7 +125,7 @@ namespace greenEyeProject.Controllers
             }
         }
 
-        // 🔹 POST: api/Auth/ForgotPassword
+        //  POST: api/Auth/ForgotPassword
         [HttpPost("ForgotPassword")]
         
         public async Task<IActionResult> ForgotPassword(ForgotPasswordRequestDto dto)
@@ -141,7 +141,7 @@ namespace greenEyeProject.Controllers
             }
         }
 
-        // 🔹 POST: api/Auth/ResetPassword
+        //  POST: api/Auth/ResetPassword
         [HttpPost("ResetPassword")]
         
         public async Task<IActionResult> ResetPassword(ResetPasswordRequestDto dto)
