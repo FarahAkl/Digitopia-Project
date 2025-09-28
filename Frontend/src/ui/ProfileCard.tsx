@@ -65,7 +65,7 @@ export default function ProfileCard({ data }: { data: ProfileSuccessT }) {
           </div>
         )}
         {error ? <p>{error}</p> : ""}
-        <div className="flex gap-1">
+        <div className="flex gap-1 justify-center items-center">
           <button
             type="button"
             onClick={handleDelete}

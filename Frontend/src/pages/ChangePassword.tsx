@@ -3,12 +3,17 @@ import { changePassword } from "../services/Auth/apiChangePassword";
 import { changePasswordRequestSchema } from "../schema/auth/changePassword.schema";
 import { AxiosError } from "axios";
 import { Link } from "react-router";
-import { Button, Form, Input, Spinner } from "@heroui/react";
+import { Spinner } from "@heroui/react";
+import Card from "../ui/Card";
+import Heading from "../ui/Heading";
+import Header from "../ui/Header";
 
 export default function ChangePassword() {
   const [email, setEmail] = useState("");
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
+
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -17,6 +22,12 @@ export default function ChangePassword() {
     e.preventDefault();
     setError(null);
     setSuccess(null);
+
+    if (newPassword !== confirmNewPassword) {
+      setError("New password must be the same as the confirm new password");
+    }
+
+    if (!email || !oldPassword || !newPassword || !confirmNewPassword) return;
 
     // validate inputs with zod
     const parsed = changePasswordRequestSchema.safeParse({
@@ -45,6 +56,7 @@ export default function ChangePassword() {
         setEmail("");
         setOldPassword("");
         setNewPassword("");
+        setConfirmNewPassword("");
       } else {
         setError(res.message);
       }
@@ -62,42 +74,64 @@ export default function ChangePassword() {
   if (loading) return <Spinner />;
 
   return (
-    <Form
-      onSubmit={handleSubmit}
-      className="mx-auto mt-10 flex w-80 flex-col gap-3"
-    >
-      <Input
-        type="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        placeholder="Enter your email"
-        className="rounded border p-2"
-      />
-      <Input        
-        onChange={(e) => setOldPassword(e.target.value)}
-        placeholder="Enter your old password"
-        className="rounded border p-2"
-      />
-      <Input
-        type="password"
-        value={newPassword}
-        onChange={(e) => setNewPassword(e.target.value)}
-        placeholder="Enter your new password"
-        className="rounded border p-2"
-      />
-
-      {error && <p className="text-sm text-red-500">{error}</p>}
-      {success && <p className="text-sm text-green-600">{success}</p>}
-
-      <Button
-        type="submit"
-        disabled={loading}
-        className="rounded bg-blue-600 py-2 text-white hover:bg-blue-700 disabled:opacity-50"
-      >
-        {loading ? "Changing..." : "Change Password"}
-      </Button>
-
-      <Link to="/login">Back to Login</Link>
-    </Form>
+    <>
+      <Header />
+      <div className="flex h-[90vh] w-full items-center justify-center bg-blue-50">
+        <Card>
+          <Heading>ChangePassword</Heading>
+          <div className="mb-3 flex w-full flex-col gap-2 [&_input]:w-full [&_input]:rounded-sm [&_input]:bg-blue-50 [&_input]:px-2 [&_input]:py-1">
+            <input
+              type="email"
+              value={email}
+              placeholder="Email"
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <input
+              type="password"
+              value={oldPassword}
+              placeholder="Old Password"
+              onChange={(e) => setOldPassword(e.target.value)}
+            />
+            <input
+              type="password"
+              value={newPassword}
+              placeholder="New Password"
+              onChange={(e) => setNewPassword(e.target.value)}
+            />
+            <input
+              type="password"
+              value={confirmNewPassword}
+              placeholder="Confirm New Password"
+              onChange={(e) => setConfirmNewPassword(e.target.value)}
+            />
+            {error && (
+              <p className="mb-1 w-full rounded-md bg-red-100 px-2 py-1 text-sm text-red-500">
+                ❌ {error}
+              </p>
+            )}
+            {success && (
+              <p className="mb-1 w-full rounded-md bg-green-50 px-2 py-1 text-sm text-green-500">
+                ✅ {success}
+              </p>
+            )}
+            <div className="my-4 flex gap-4">
+              <button
+                type="button"
+                className="text-medium w-1/2 rounded-sm bg-green-900 py-1 font-semibold text-blue-50"
+                onClick={handleSubmit}
+              >
+                Change Password
+              </button>
+              <Link
+                to={"/login"}
+                className="border-1.5 w-1/2 rounded-sm bg-blue-50 py-1 text-center text-green-900"
+              >
+                Back to Login
+              </Link>
+            </div>
+          </div>
+        </Card>
+      </div>
+    </>
   );
 }
