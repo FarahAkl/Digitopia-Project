@@ -49,39 +49,6 @@ namespace greenEyeProject.Controllers
         
 
 
-
-        //// 🔹 POST: api/Auth/Register
-        //[HttpPost("Register")]
-        //public async Task<IActionResult> Register(RegisterRequestDto dto)
-        //{
-        //    try
-        //    {
-        //        var result = await _authService.RegisterAsync(dto);
-        //        return Ok(new { message = result });
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return BadRequest(new { message = ex.Message });
-        //    }
-        //}
-
-
-        //// 🔹 GET: api/Auth/VerifyEmail
-        //[HttpGet("VerifyEmail")]
-        //public async Task<IActionResult> VerifyEmail([FromQuery] string email, [FromQuery] string token)
-        //{
-        //    try
-        //    {
-        //        var result = await _authService.VerifyEmailAsync(email, token);
-        //        return Ok(new { message = result });
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return BadRequest(new { message = ex.Message });
-        //    }
-        //}
-
-
         //  POST: api/Auth/Login
         [HttpPost("Login")]
         public async Task<IActionResult> Login(LoginRequestDto dto)
