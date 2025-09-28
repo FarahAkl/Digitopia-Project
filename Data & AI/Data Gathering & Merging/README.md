@@ -30,11 +30,11 @@ This folder contains documentation for the project datasets, including:
 
 - Each region folder contains **monthly CSV files** sampled from GEE.  
 - `combined_data.csv` contains **all regions merged** into a single dataset.
-- `Scripts Folder` contains the code to merge all data.
-- `Regathering_Data_for_model Folder` contains scripts & data files after regathering for the model.
+- `merge data Folder` contains the code to merge all data.
+- `Regathering_Data_for_model Folder` contains scripts & data files after recombination data for the model and evaluate the website.
 - `regathering_test_data.ipynb` This code file to gather and cotact test data.
 - `regathering_train_data.ipynb` This code file to gather and cotact train data.
-- `test_data.csv & train_data.csv` contains the data used for testing and training the model.
+- `test_data.csv & train_data.csv` contains the data used for testing/ evalute the website and training the model.
 
 ---
 
