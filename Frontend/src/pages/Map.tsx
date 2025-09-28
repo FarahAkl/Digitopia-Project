@@ -1,5 +1,12 @@
 import { useSearchParams } from "react-router-dom";
-import { MapContainer, TileLayer, useMap, useMapEvents } from "react-leaflet";
+import {
+  Circle,
+  MapContainer,
+  Marker,
+  TileLayer,
+  useMap,
+  useMapEvents,
+} from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import type { LatLngExpression } from "leaflet";
 
@@ -74,10 +81,16 @@ export default function Map() {
         </button>
       )}
       <MapContainer
-        center={mapPosition}
+        // center={mapPosition}
+        center={[26.8206, 30.8025]}
         zoom={5}
         scrollWheelZoom={true}
-        className="h-full"
+        maxBounds={[
+          [22, 25],
+          [32, 36],
+        ]}
+        maxBoundsViscosity={1.0}
+        className="h-[100vh] w-full"
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -85,6 +98,7 @@ export default function Map() {
         />
         <ChangeCenter position={mapPosition} />
         <DetectClick />
+        <LocationMarker />
       </MapContainer>
       <Prediciton data={data} error={error} loading={loading} />
     </div>
@@ -109,4 +123,29 @@ function DetectClick() {
     },
   });
   return null;
+}
+
+function LocationMarker() {
+  const [position, setPosition] = useState<[number, number] | null>(null);
+
+  useMapEvents({
+    click(e) {
+      setPosition([e.latlng.lat, e.latlng.lng]);
+    },
+  });
+
+  return position === null ? null : (
+    <>
+      <Marker position={position} />
+      <Circle
+        center={position}
+        radius={10000} 
+        pathOptions={{
+          color: "green",
+          fillColor: "lightgreen",
+          fillOpacity: 0.4,
+        }}
+      />
+    </>
+  );
 }
