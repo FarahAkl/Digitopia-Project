@@ -81,22 +81,23 @@
 
 ## API Endpoints
 
-| Method | URL                      | Description                                              | Authorization    |
-| ------ | ------------------------ | -------------------------------------------------------- | ---------------- |
-| POST   | /api/Auth/Register       | Register a new user (sends verification email)           | No               |
-| POST   | /api/Auth/Login          | User login and receive JWT token                         | No               |
-| POST   | /api/Auth/Logout         | Logout user                                              | Yes (JWT)        |
-| POST   | /api/Auth/ForgotPassword | Request password reset link                              | No               |
-| POST   | /api/Auth/ResetPassword  | Reset password using token                               | No               |
-| DELETE | /api/Auth/DeleteAccount  | Delete user account                                      | Yes (JWT)        |
-| POST   | /api/Auth/ChangePassword | Change user password                                     | Yes (JWT)        |
-| GET    | /api/User/Profile        | Get current user profile                                 | Yes (JWT)        |
-| PUT    | /api/User/Profile        | Edit current user profile (including Location as string) | Yes (JWT)        |
-| GET    | /MyNotifications         | Get all notifications for current user                   | Yes (JWT)        |
-| PUT    | /MarkAsRead              | Mark specific notification(s) as read                    | Yes (JWT)        |
-| POST   | /Send                    | Send a notification (usually Admin only)                 | Yes (JWT)        |
-| GET    | /api/Admin/Users         | Get all users (Admin only)                               | Yes (JWT, Admin) |
-| GET    | /api/Auth/VerifyEmail    | Verify user email using token                            | No               |
+| Method | URL                      | Description                                                   | Authorization    |
+| ------ | ------------------------ | --------------------------------------------------------      | ---------------- |
+| POST   | /api/Auth/Register       | Register a new user (sends verification email with token)     | No               |
+| GET    | /api/Auth/VerifyEmail    | Verify user email using token + email, then redirect to login | No               |
+| POST   | /api/Auth/Login          | User login and receive JWT token                              | No               |
+| POST   | /api/Auth/Logout         | Logout user                                                   | Yes (JWT)        |
+| POST   | /api/Auth/ForgotPassword | Request password reset link                                   | No               |
+| POST   | /api/Auth/ResetPassword  | Reset password using token                                    | No               |
+| DELETE | /api/Auth/DeleteAccount  | Delete user account                                           | Yes (JWT)        |
+| POST   | /api/Auth/ChangePassword | Change user password                                          | Yes (JWT)        |
+| GET    | /api/User/Profile        | Get current user profile                                      | Yes (JWT)        |
+| PUT    | /api/User/Profile        | Edit current user profile (including Location as string)      | Yes (JWT)        |
+| GET    | /MyNotifications         | Get all notifications for current user                        | Yes (JWT)        |
+| PUT    | /MarkAsRead              | Mark specific notification(s) as read                         | Yes (JWT)        |
+| POST   | /Send                    | Send a notification (usually Admin only)                      | Yes (JWT)        |
+| GET    | /api/Admin/Users         | Get all users (Admin only)                                    | Yes (JWT, Admin) |
+
 
 ---
 
@@ -105,9 +106,14 @@
 * Flow:
 
   1. User registers using /api/Auth/Register.
-  2. System sends verification email with unique token.
-  3. User clicks verification link: /api/Auth/VerifyEmail?token={token}&email={email}.
-  4. System sets IsEmailVerified = true if token is valid and not expired.
+  2. System generates a unique verification token with 24-hour expiry and sends it to the user's email.
+  3. User clicks verification link :/api/Auth/VerifyEmail?token={token}&email={email}.
+  4. API checks:
+     * If the user exists.
+     * If the email is not already verified.
+     * If the token matches and is not expired.
+  5. If valid → sets IsEmailVerified = true and clears the token + expiry.
+  6. User is then redirected automatically to the frontend login page.
 
 ---
 
