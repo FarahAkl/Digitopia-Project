@@ -9,6 +9,7 @@ import Profile from "./pages/Profile";
 import Map from "./pages/Map";
 import Home from "./pages/Home";
 import Contact from "./pages/Contact";
+import ResetPassword from "./pages/ResetPassword";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/resetPassword" element={<ResetPassword/>}/>
 
           {/* Protected Routes */}
           <Route

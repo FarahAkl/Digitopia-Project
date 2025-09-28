@@ -11,7 +11,8 @@
 5. [Seed Data](#seed-data)
 6. [API Endpoints](#api-endpoints)
 7. [Email Verification](#email-verification)
-8. [Swagger, JWT Integration & Live Demo](#swagger-jwt-integration--live-demo)
+8. [Reset Password](#reset-password)
+9. [Swagger, JWT Integration & Live Demo](#swagger-jwt-integration--live-demo)
 
 ---
 
@@ -19,10 +20,12 @@
 
 * User login (Login) and registration (Register) using JWT.
 * User roles:
-
   * Admin for administrative tasks.
   * User for personal access.
 * Password Change (ChangePassword) for users.
+* Forgot / Reset Password flow implemented:
+  * ForgotPassword → sends reset link to user's email.
+  * ResetPassword → validates token and updates password.
 * Email verification added for new users.
 
 ---
@@ -63,6 +66,11 @@
   * IsEmailVerified → bool
   * EmailVerificationToken → string
   * EmailVerificationTokenExpiry → datetime
+    
+* Added reset password fields in Users table:
+  
+  * ResetToken → string
+  * ResetTokenExpiry → datetime
 
 ---
 
@@ -87,8 +95,8 @@
 | GET    | /api/Auth/VerifyEmail    | Verify user email using token + email, then redirect to login | No               |
 | POST   | /api/Auth/Login          | User login and receive JWT token                              | No               |
 | POST   | /api/Auth/Logout         | Logout user                                                   | Yes (JWT)        |
-| POST   | /api/Auth/ForgotPassword | Request password reset link                                   | No               |
-| POST   | /api/Auth/ResetPassword  | Reset password using token                                    | No               |
+| POST   | /api/Auth/ForgotPassword | Request password reset link(sends email with reset link & token)| No               |
+| POST   | /api/Auth/ResetPassword  | Reset password using token (user provides new password + confirm)| No               |
 | DELETE | /api/Auth/DeleteAccount  | Delete user account                                           | Yes (JWT)        |
 | POST   | /api/Auth/ChangePassword | Change user password                                          | Yes (JWT)        |
 | GET    | /api/User/Profile        | Get current user profile                                      | Yes (JWT)        |
@@ -114,6 +122,30 @@
      * If the token matches and is not expired.
   5. If valid → sets IsEmailVerified = true and clears the token + expiry.
   6. User is then redirected automatically to the frontend login page.
+
+---
+
+## Reset Password
+
+* Flow:
+
+  1. User requests password reset → /api/Auth/ForgotPassword with their email.
+  2. System generates a ResetToken with 1-hour expiry and emails the reset link.
+  3. User clicks reset link → redirected to frontend reset-password page:
+     /reset-password?token={token}&email={email}
+  4. User enters:
+     * New password
+     * Confirm new password
+     (email + token are prefilled automatically from query string)
+  5. Frontend sends request to /api/Auth/ResetPassword with:
+     * email
+     * token
+     * new password
+  6. API validates:
+     * User exists.
+     * Token matches and not expired.
+  7. If valid → update password, clear token + expiry.
+  8. Return success message → frontend redirects to login.
 
 ---
 
