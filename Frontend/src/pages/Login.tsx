@@ -87,7 +87,7 @@ export default function Login() {
     <AppLayout>
       <div className="relative">
         <img
-          src="/bg-login.png"
+          src="/bg-login.jpg"
           alt="bg-login"
           className="h-full w-full object-cover"
         />

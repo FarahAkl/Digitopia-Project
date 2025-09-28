@@ -7,7 +7,9 @@ export default function Card({ children }: { children: ReactNode }) {
         src="/card-bg.jpg"
         className="absolute inset-0 h-full w-full object-cover"
       />
-      <div className="z-[1000] w-full px-14">{children}</div>
+      <div className="z-[1000] flex w-full items-center justify-center px-14">
+        {children}
+      </div>
     </div>
   );
 }

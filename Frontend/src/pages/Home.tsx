@@ -4,6 +4,7 @@ export default function Home() {
   return (
     <>
       <Header />
+      <img src="/landing-bg.jpg"/>
     </>
   );
 }

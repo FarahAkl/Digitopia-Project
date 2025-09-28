@@ -62,7 +62,10 @@ export default function RegisterPage() {
     try {
       const res = await register(parsed.data);
       if (res.success) {
-        setServerMessage({ type: "success", text: `✅ ${res.data}` });
+        setServerMessage({
+          type: "success",
+          text: `✅ ${typeof res.data === "string" ? res.data : res.data.message}`,
+        });
       } else {
         setServerMessage({
           type: "error",
@@ -197,7 +200,7 @@ export default function RegisterPage() {
       </AuthForm>
       <div className="hidden md:block">
         <img
-          src="/bg-signup.png"
+          src="/bg-signup.jpg"
           alt="bg-signup"
           className="h-full w-full object-cover"
         />
