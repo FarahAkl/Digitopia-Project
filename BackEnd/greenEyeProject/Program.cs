@@ -9,16 +9,12 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// =========================
 //  Database Context
-// =========================
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 
-// =========================
 //  Auth Service
-// =========================
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAdminService, AdminService>();
@@ -26,27 +22,22 @@ builder.Services.AddScoped<INotificationService, NotificationService>();
 
 
 
-// =========================
 //  AutoMapper
-// =========================
 builder.Services.AddAutoMapper(cfg =>
 {
     cfg.AddProfile<MappingProfile>(); 
 });
-// =========================
+
+
 //  Controllers
-// =========================
 builder.Services.AddControllers();
 
-// =========================
 //  Swagger / OpenAPI
-// =========================
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new() { Title = "greenfootprint API", Version = "v1" });
+    c.SwaggerDoc("v1", new() { Title = "greenfootprint API", Version = "v2" });
 
-    // إعداد JWT Authentication في Swagger
     c.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
     {
         Name = "Authorization",
@@ -73,9 +64,9 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-// =========================
+
+
 //  JWT Authentication
-// =========================
 var jwtSettings = builder.Configuration.GetSection("Jwt");
 var key = Encoding.UTF8.GetBytes(jwtSettings["Key"]);
 
@@ -104,9 +95,7 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddAuthorization();
 
 
-// =========================
 //  CORS
-// =========================
 var frontendUrls = builder.Configuration.GetSection("AppSettings:FrontendUrls").Get<string[]>();
 
 
@@ -121,9 +110,7 @@ builder.Services.AddCors(options =>
 });
 
 
-// =========================
 //  Build App
-// =========================
 var app = builder.Build();
 
 
@@ -137,9 +124,9 @@ var app = builder.Build();
 //    Console.WriteLine("Running in Production mode");
 //}
 
-// =========================
+
+
 //  Middleware Pipeline
-// =========================
 app.UseSwagger();
 app.UseSwaggerUI();
 

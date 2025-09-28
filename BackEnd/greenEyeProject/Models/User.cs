@@ -24,7 +24,7 @@ namespace greenEyeProject.Models
         public string PhoneNumber { get; set; }
 
         [MaxLength(250)]
-        public string? Location { get; set; }  // بدل جدول Location
+        public string? Location { get; set; }  
 
         public DateTime CreatedAt { get; set; }
 
@@ -38,7 +38,7 @@ namespace greenEyeProject.Models
         public DateTime? EmailVerificationTokenExpiry { get; set; }
 
 
-        // 🔹 New fields for reset password
+        //  New fields for reset password
         public string? ResetToken { get; set; }
         public DateTime? ResetTokenExpiry { get; set; }
 
