@@ -25,6 +25,11 @@ export default function Login() {
     setError(null);
     setSuccess(null);
 
+    if (!email || !password) {
+      setError('Email and Password are required')
+      return;
+    }
+
     const parsed = loginRequestSchema.safeParse({ email, password });
     if (!parsed.success) {
       setError(parsed.error.issues[0]?.message || "Invalid input");
