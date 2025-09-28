@@ -30,8 +30,8 @@ namespace greenEyeProject.Controllers
             var result = await _authService.RegisterAsync(dto);
             return Ok(result);
         }
-
-        [HttpGet("confirm-email")]
+            
+        [HttpGet("VerifyEmail")]
         public async Task<IActionResult> ConfirmEmail(string email, string token)
         {
             var redirectUrl = await _authService.VerifyEmailAsync(email, token);
