@@ -111,11 +111,13 @@ export default function Login() {
 
         {error && (
           <p className="w-full rounded-md bg-red-100 px-2 py-1 text-sm text-red-500">
-            {error}
+            ❌ {error}
           </p>
         )}
         {success && (
-          <p className="bg-green-50 text-sm text-green-500">{success}</p>
+          <p className="w-full rounded-md bg-green-50 px-2 py-1 text-sm text-green-500">
+            ✅ {success}
+          </p>
         )}
 
         <Button
