@@ -64,7 +64,10 @@ export default function RegisterPage() {
       if (res.success) {
         setServerMessage({ type: "success", text: `✅ ${res.data}` });
       } else {
-        setServerMessage({ type: "error", text: `❌ ${res.error}` });
+        setServerMessage({
+          type: "error",
+          text: `❌ ${typeof res.error === "string" ? res.error : res.error.message}`,
+        });
       }
     } catch {
       setServerMessage({
