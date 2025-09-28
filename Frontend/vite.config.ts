@@ -6,12 +6,12 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineConfig({
   plugins: [react(),tailwindcss()],
   server: {
-    proxy: {
-      "/api": {
-        target: "http://greeneye4424.runasp.net",
-        changeOrigin: true,
-        secure: false, // لو البروتوكول http مش https
-      },
-    },
+    // proxy: {
+    //   "/api": {
+    //     target: "http://greeneye4424.runasp.net",
+    //     changeOrigin: true,
+    //     secure: false, // لو البروتوكول http مش https
+    //   },
+    // },
   },
 });

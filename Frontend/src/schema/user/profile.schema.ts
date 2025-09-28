@@ -4,9 +4,9 @@ export const userSuccessResponseSchema = z.object({
   name: z.string(),
   email: z.email(),
   phoneNumber: z.string(),
-  location: z.string().optional(),
+  location: z.string().nullable(),
   role: z.string(),
-  profileImageUrl: z.string().optional(),
+  profileImageUrl: z.string().nullable(),
 });
 
 export const userErrorResponseSchema = z.object({

@@ -1,100 +1,27 @@
-// import { useEffect, useState } from "react";
-// import { profileData } from "../services/User/apiProfile";
-// import type { UserResponseT } from "../schema/user/profile.schema";
-// import { Spinner } from "@heroui/react";
-
-// export default function Profile() {
-//   const [data, setData] = useState<UserResponseT | null>(null);
-//   const [loading, setLoading] = useState(false);
-
-//   useEffect(() => {
-//     const fetchProfile = async () => {
-//       setLoading(true);
-//       const res = await profileData();
-//       setData(res);
-//       setLoading(false);
-//     };
-
-//     fetchProfile();
-//   }, []);
-
-//   if (loading) return <Spinner />;
-
-//   if (!data) return null;
-
-//   // ✅ check if it's an error
-//   if ("message" in data) {
-//     return <p className="text-red-500">{data.message}</p>;
-//   }
-
-//   // ✅ here TypeScript knows it's success response
-//   return (
-//     <div className="mx-auto mt-10 max-w-md rounded border p-4 shadow">
-//       <h2 className="mb-4 text-xl font-bold">Profile</h2>
-//       {data.profileImageUrl && (
-//         <img
-//           src={data.profileImageUrl}
-//           alt={`${data.name}'s profile`}
-//           className="mb-4 h-24 w-24 rounded-full object-cover"
-//         />
-//       )}
-//       <p>
-//         <strong>Name:</strong> {data.name}
-//       </p>
-//       <p>
-//         <strong>Email:</strong> {data.email}
-//       </p>
-//       <p>
-//         <strong>Phone:</strong> {data.phoneNumber}
-//       </p>
-//       <p>
-//         <strong>Role:</strong> {data.role}
-//       </p>
-
-//       {data.location && (
-//         <div className="mt-2">
-//           <strong>Locations:</strong>
-//           <p>{data.location}</p>
-//         </div>
-//       )}
-//     </div>
-//   );
-// }
 import { useEffect, useState } from "react";
+import { Spinner } from "@heroui/react";
 import { profileData } from "../services/User/apiProfile";
-import { type UserResponseT } from "../schema/user/profile.schema";
-import { AxiosError } from "axios";
-import ProfileLoader from "../ui/ProfileLoader";
-import ProfileError from "../ui/ProfileError";
-// import ProfileCard from "../ui/ProfileCard";
-
-
-// ✅ type guard
-function isSuccessResponse(
-  data: UserResponseT,
-): data is Exclude<UserResponseT, { message: string }> {
-  return !("message" in data);
-}
+import type { UserResponseT } from "../schema/user/profile.schema";
+import Header from "../ui/Header";
+import ProfileCard from "../ui/ProfileCard";
 
 export default function Profile() {
   const [data, setData] = useState<UserResponseT | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchProfile = async () => {
+      setLoading(true);
+      setError(null);
       try {
         const res = await profileData();
-        if (isSuccessResponse(res)) {
-          setData(res);
+        setData(res);
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          setError(err.message);
         } else {
-          setError(res.message);
-        }
-      } catch (err) {
-        if (err instanceof AxiosError) {
-          setError(err.response?.data?.message || "Request failed.");
-        } else {
-          setError("Unexpected error occurred.");
+          setError("Unexpected error occurred");
         }
       } finally {
         setLoading(false);
@@ -104,10 +31,22 @@ export default function Profile() {
     fetchProfile();
   }, []);
 
-  if (loading) return <ProfileLoader />;
-  if (error) return <ProfileError message={error} />;
-  if (!data) return <ProfileError message="No profile data found." />;
+  if (loading) return <Spinner />;
 
-  // if(data typeof userResponseSchema)
-  // return <ProfileCard data={data} />;
+  if (error) return <p className="text-red-500">{error}</p>;
+
+  if (!data) return null;
+
+  if ("message" in data) {
+    return <p className="text-red-500">{data.message}</p>;
+  }
+
+  return (
+    <>
+      <Header />
+      <div className="h-[90vh] flex items-center justify-center bg-blue-50">
+        <ProfileCard data={data} />
+      </div>
+    </>
+  );
 }

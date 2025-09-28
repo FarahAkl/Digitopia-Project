@@ -1,176 +1,15 @@
-// import { useState } from "react";
-// import { register } from "../services/Auth/apiRegister";
-// import {
-//   registerRequestSchema,
-//   type registerRequestT,
-// } from "../schema/auth/register.schema";
-// import { Spinner } from "@heroui/react";
-
-// export default function RegisterPage() {
-//   const [formData, setFormData] = useState<registerRequestT>({
-//     name: "",
-//     email: "",
-//     password: "",
-//     phoneNumber: "",
-//     profileImageUrl: "",
-//     location: "",
-//   });
-
-//   const [errors, setErrors] = useState<Record<string, string>>({});
-//   const [loading, setLoading] = useState(false);
-//   const [serverMessage, setServerMessage] = useState<string | null>(null);
-
-//   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-//     const { name, value } = e.target;
-//     setFormData((prev) => ({ ...prev, [name]: value }));
-//     setErrors((prev) => ({ ...prev, [name]: "" }));
-//   };
-
-//   const handleSubmit = async (e: React.FormEvent) => {
-//     e.preventDefault();
-//     const cleanedData = {
-//       ...formData,
-//       profileImageUrl: formData.profileImageUrl || undefined,
-//       location: formData.location || undefined,
-//     };
-
-//     const parsed = registerRequestSchema.safeParse(cleanedData);
-//     if (!parsed.success) {
-//       const fieldErrors: Record<string, string> = {};
-//       parsed.error.issues.forEach((err) => {
-//         if (err.path[0]) {
-//           fieldErrors[err.path[0] as string] = err.message;
-//         }
-//       });
-//       setErrors(fieldErrors);
-//       return;
-//     }
-
-//     setLoading(true);
-//     setServerMessage(null);
-
-//     try {
-//       const res = await register(parsed.data);
-//       setServerMessage(res.message);
-//     } catch {
-//       setServerMessage("Registration failed, please try again.");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   if (loading)
-//     return (
-//       <Spinner/>
-//     );
-
-//   return (
-//     <div className="flex min-h-screen items-center justify-center bg-gray-100">
-//       <form
-//         onSubmit={handleSubmit}
-//         className="w-96 rounded-lg bg-white p-6 shadow-md"
-//       >
-//         <h2 className="mb-4 text-center text-xl font-bold">Register</h2>
-
-//         {serverMessage && (
-//           <div className="mb-3 text-center text-sm text-red-500">
-//             {serverMessage}
-//           </div>
-//         )}
-
-//         <input
-//           className="mb-1 w-full rounded border p-2"
-//           type="text"
-//           name="name"
-//           placeholder="Name"
-//           value={formData.name}
-//           onChange={handleChange}
-//         />
-//         {errors.name && (
-//           <p className="mb-2 text-xs text-red-500">{errors.name}</p>
-//         )}
-
-//         <input
-//           className="mb-1 w-full rounded border p-2"
-//           type="email"
-//           name="email"
-//           placeholder="Email"
-//           value={formData.email}
-//           onChange={handleChange}
-//         />
-//         {errors.email && (
-//           <p className="mb-2 text-xs text-red-500">{errors.email}</p>
-//         )}
-
-//         <input
-//           className="mb-1 w-full rounded border p-2"
-//           type="password"
-//           name="password"
-//           placeholder="Password"
-//           value={formData.password}
-//           onChange={handleChange}
-//         />
-//         {errors.password && (
-//           <p className="mb-2 text-xs text-red-500">{errors.password}</p>
-//         )}
-
-//         <input
-//           className="mb-1 w-full rounded border p-2"
-//           type="text"
-//           name="phoneNumber"
-//           placeholder="Phone Number"
-//           value={formData.phoneNumber}
-//           onChange={handleChange}
-//         />
-//         {errors.phoneNumber && (
-//           <p className="mb-2 text-xs text-red-500">{errors.phoneNumber}</p>
-//         )}
-
-//         <input
-//           className="mb-1 w-full rounded border p-2"
-//           type="url"
-//           name="profileImageUrl"
-//           placeholder="Profile Image URL (Optional)"
-//           value={formData.profileImageUrl}
-//           onChange={handleChange}
-//         />
-//         {errors.profileImageUrl && (
-//           <p className="mb-2 text-xs text-red-500">{errors.profileImageUrl}</p>
-//         )}
-
-//         <input
-//           className="mb-1 w-full rounded border p-2"
-//           type="text"
-//           name="location"
-//           placeholder="Location (Optional)"
-//           value={formData.location}
-//           onChange={handleChange}
-//         />
-//         {errors.location && (
-//           <p className="mb-2 text-xs text-red-500">{errors.location}</p>
-//         )}
-
-//         <button
-//           type="submit"
-//           disabled={loading}
-//           className="w-full rounded bg-blue-600 py-2 text-white hover:bg-blue-700 disabled:bg-gray-400"
-//         >
-//           {loading ? "..." : "Register"}
-//         </button>
-//       </form>
-//     </div>
-//   );
-// }
 import { useState } from "react";
 import { register } from "../services/Auth/apiRegister";
 import {
   registerRequestSchema,
   type registerRequestT,
 } from "../schema/auth/register.schema";
+import AppLayout from "../ui/AppLayout";
+import Heading from "../ui/Heading";
 import { Spinner, Button } from "@heroui/react";
-import { AuthLayout } from "../ui/AppLayout";
 import { AuthForm } from "../ui/AuthForm";
 import { AuthInput } from "../ui/AuthInput";
+import { useNavigate } from "react-router";
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState<registerRequestT>({
@@ -182,9 +21,18 @@ export default function RegisterPage() {
     location: "",
   });
 
+  type ServerMessage = {
+    type: "success" | "error";
+    text: string;
+  } | null;
+
+  const navigate = useNavigate();
+
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
-  const [serverMessage, setServerMessage] = useState<string | null>(null);
+  const [serverMessage, setServerMessage] = useState<ServerMessage | null>(
+    null,
+  );
 
   const handleChange = (key: keyof registerRequestT, value: string) => {
     setFormData((prev) => ({ ...prev, [key]: value }));
@@ -216,9 +64,17 @@ export default function RegisterPage() {
 
     try {
       const res = await register(parsed.data);
-      setServerMessage(res.message);
+      if (res.success) {
+        setServerMessage({ type: "success", text: `✅ ${res.data.message}` });
+        navigate("/login");
+      } else {
+        setServerMessage({ type: "error", text: `❌ ${res.error.message}` });
+      }
     } catch {
-      setServerMessage("Registration failed, please try again.");
+      setServerMessage({
+        type: "error",
+        text: "Registration failed, please try again.",
+      });
     } finally {
       setLoading(false);
     }
@@ -232,20 +88,47 @@ export default function RegisterPage() {
     );
 
   return (
-    <AuthLayout title="Register">
-      {serverMessage && (
-        <div className="mb-3 text-center text-sm text-red-500">
-          {serverMessage}
-        </div>
-      )}
-
+    <AppLayout>
       <AuthForm onSubmit={handleSubmit}>
+        <Heading>SignUp Form</Heading>
+        <div
+          onClick={() => document.getElementById("uploadImageInput")?.click()}
+          className="absolute top-14 right-3 z-40 flex h-30 w-30 items-center justify-center rounded-full border-4 border-green-600 bg-green-900 text-center lg:top-8"
+        >
+          <p className="text-xl font-semibold text-amber-50">
+            {!formData.profileImageUrl ? (
+              "+ Upload Image"
+            ) : (
+              <img
+                src={formData.profileImageUrl}
+                className="h-24 w-24 rounded-full"
+              />
+            )}
+          </p>
+          <input
+            hidden
+            id="uploadImageInput"
+            type="file"
+            accept="image/*"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) {
+                const url = URL.createObjectURL(file);
+                handleChange("profileImageUrl", url); // string
+              }
+            }}
+          />
+        </div>
         <AuthInput
           value={formData.name}
           placeholder="Name"
           onChange={(val) => handleChange("name", val)}
         />
-        {errors.name && <p className="text-xs text-red-500">{errors.name}</p>}
+        {errors.name && (
+          <p className="w-full rounded-md bg-red-100 px-3 py-2 text-xs text-red-500">
+            {errors.name}
+          </p>
+        )}
 
         <AuthInput
           type="email"
@@ -253,7 +136,11 @@ export default function RegisterPage() {
           placeholder="Email"
           onChange={(val) => handleChange("email", val)}
         />
-        {errors.email && <p className="text-xs text-red-500">{errors.email}</p>}
+        {errors.email && (
+          <p className="w-full rounded-md bg-red-100 px-3 py-2 text-xs text-red-500">
+            {errors.email}
+          </p>
+        )}
 
         <AuthInput
           type="password"
@@ -262,7 +149,9 @@ export default function RegisterPage() {
           onChange={(val) => handleChange("password", val)}
         />
         {errors.password && (
-          <p className="text-xs text-red-500">{errors.password}</p>
+          <p className="w-full rounded-md bg-red-100 px-3 py-2 text-xs text-red-500">
+            {errors.password}
+          </p>
         )}
 
         <AuthInput
@@ -271,17 +160,9 @@ export default function RegisterPage() {
           onChange={(val) => handleChange("phoneNumber", val)}
         />
         {errors.phoneNumber && (
-          <p className="text-xs text-red-500">{errors.phoneNumber}</p>
-        )}
-
-        <AuthInput
-          type="url"
-          value={formData.profileImageUrl}
-          placeholder="Profile Image URL (Optional)"
-          onChange={(val) => handleChange("profileImageUrl", val)}
-        />
-        {errors.profileImageUrl && (
-          <p className="text-xs text-red-500">{errors.profileImageUrl}</p>
+          <p className="w-full rounded-md bg-red-100 px-3 py-2 text-xs text-red-500">
+            {errors.phoneNumber}
+          </p>
         )}
 
         <AuthInput
@@ -290,13 +171,38 @@ export default function RegisterPage() {
           onChange={(val) => handleChange("location", val)}
         />
         {errors.location && (
-          <p className="text-xs text-red-500">{errors.location}</p>
+          <p className="w-full rounded-md bg-red-100 px-3 py-2 text-xs text-red-500">
+            {errors.location}
+          </p>
         )}
 
-        <Button type="submit" color="primary" className="w-full">
-          Register
+        {serverMessage && (
+          <div
+            className={`mb-3 w-full rounded-md py-2.5 text-center text-sm font-medium ${
+              serverMessage.type === "success"
+                ? "bg-green-100 text-green-600"
+                : "bg-red-100 text-red-500"
+            }`}
+          >
+            {serverMessage.text}
+          </div>
+        )}
+
+        <Button
+          type="submit"
+          color="primary"
+          className="text-medium w-full border-2 border-lime-700"
+        >
+          Sign Up
         </Button>
       </AuthForm>
-    </AuthLayout>
+      <div className="hidden md:block">
+        <img
+          src="/bg-signup.png"
+          alt="bg-signup"
+          className="h-full w-full object-cover"
+        />
+      </div>
+    </AppLayout>
   );
 }

@@ -1,16 +1,13 @@
 import type { ReactNode } from "react";
+import Header from "./Header";
 
-export function AuthLayout({
-  title,
-  children,
-}: {
-  title: string;
-  children: ReactNode;
-}) {
+export default function AppLayout({ children }: { children: ReactNode }) {
   return (
-    <div className="mx-auto mt-10 w-80 rounded-xl bg-white p-6 shadow">
-      <h2 className="mb-4 text-center text-xl font-semibold">{title}</h2>
-      {children}
-    </div>
+    <>
+      <Header />
+      <div className="grid w-full grid-cols-1 overflow-hidden bg-amber-50 md:grid-cols-2 lg:h-[90vh]">
+        {children}
+      </div>
+    </>
   );
 }
