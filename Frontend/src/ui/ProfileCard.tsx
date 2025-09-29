@@ -78,8 +78,7 @@ export default function ProfileCard({ data }: { data: ProfileSuccessT }) {
         </p>
         {data.location && (
           <p>
-            <strong>Location:</strong>
-            {data.location}
+            <strong>Location:</strong> {data.location}
           </p>
         )}
 
