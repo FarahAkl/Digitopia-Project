@@ -65,18 +65,18 @@ export default function ProfileCard({ data }: { data: ProfileSuccessT }) {
           </div>
         )}
         {error ? <p>{error}</p> : ""}
-        <div className="flex gap-1 justify-center items-center">
+        <div className="flex flex-col items-center justify-center gap-1 lg:flex-row">
           <button
             type="button"
             onClick={handleDelete}
             disabled={loading}
-            className="border-1.5 rounded-sm bg-red-50 p-2 text-red-500"
+            className="border-1.5 w-full rounded-sm bg-red-50 p-2 text-red-500"
           >
             Delete Account
           </button>
           <Link
             to={"/changePassword"}
-            className="border-1.5 rounded-sm bg-blue-50 p-2 text-green-900"
+            className="border-1.5 w-full rounded-sm bg-blue-50 p-2 text-center text-green-900"
           >
             Change Password
           </Link>

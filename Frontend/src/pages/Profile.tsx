@@ -31,7 +31,12 @@ export default function Profile() {
     fetchProfile();
   }, []);
 
-  if (loading) return <Spinner />;
+  if (loading)
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <Spinner />
+      </div>
+    );
 
   if (error) return <p className="text-red-500">{error}</p>;
 
@@ -44,7 +49,7 @@ export default function Profile() {
   return (
     <>
       <Header />
-      <div className="h-[90vh] flex items-center justify-center bg-blue-50">
+      <div className="flex min-h-[90vh] items-center justify-center bg-blue-50 p-5">
         <ProfileCard data={data} />
       </div>
     </>
