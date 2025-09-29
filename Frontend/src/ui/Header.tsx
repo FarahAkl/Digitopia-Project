@@ -19,7 +19,6 @@ export default function Header() {
         <li>
           <NavLink to="/map">Map</NavLink>
         </li>
-        {/* <li><NavLink to="/contact">Contact</NavLink></li> */}
       </ul>
       {token === null ? (
         <Link

@@ -30,6 +30,13 @@ export default function ProfileCard({ data }: { data: ProfileSuccessT }) {
       setLoading(false);
     }
   };
+  if (error) {
+    return (
+      <p className="mb-1 w-full rounded-md bg-red-100 px-2 py-1 text-sm text-red-500">
+        ❌ {error}
+      </p>
+    );
+  }
   return (
     <Card>
       <div className="m-10 w-full rounded-xl border-2 border-green-700 bg-white p-4 px-6 text-green-900 shadow-lg [&_p]:my-4">
@@ -59,12 +66,12 @@ export default function ProfileCard({ data }: { data: ProfileSuccessT }) {
           <strong>Role:</strong> {data.role}
         </p>
         {data.location && (
-          <div className="mt-2">
+          <p>
             <strong>Location:</strong>
-            <p>{data.location}</p>
-          </div>
+            {data.location}
+          </p>
         )}
-        {error ? <p>{error}</p> : ""}
+
         <div className="flex flex-col items-center justify-center gap-1 lg:flex-row">
           <button
             type="button"

@@ -8,7 +8,6 @@ import ProtectedRoute from "./ui/ProtectedRoute";
 import Profile from "./pages/Profile";
 import Map from "./pages/Map";
 import Home from "./pages/Home";
-import Contact from "./pages/Contact";
 import ResetPassword from "./pages/ResetPassword";
 import PageNotFound from "./pages/PageNotFound";
 
@@ -20,7 +19,6 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/contact" element={<Contact />} />
           <Route path="/resetPassword" element={<ResetPassword/>}/>
 
           {/* Protected Routes */}
