@@ -10,6 +10,7 @@ import Map from "./pages/Map";
 import Home from "./pages/Home";
 import ResetPassword from "./pages/ResetPassword";
 import PageNotFound from "./pages/PageNotFound";
+import EditProfile from "./pages/EditProfile";
 
 function App() {
   return (
@@ -19,7 +20,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/resetPassword" element={<ResetPassword/>}/>
+          <Route path="/resetPassword" element={<ResetPassword />} />
 
           {/* Protected Routes */}
           <Route
@@ -47,6 +48,14 @@ function App() {
             }
           />
           <Route
+            path="/editProfile"
+            element={
+              <ProtectedRoute>
+                <EditProfile />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/map"
             element={
               <ProtectedRoute>
@@ -54,7 +63,7 @@ function App() {
               </ProtectedRoute>
             }
           />
-          <Route path="*" element={<PageNotFound/>}/>
+          <Route path="*" element={<PageNotFound />} />
         </Routes>
       </AuthProvider>
     </BrowserRouter>

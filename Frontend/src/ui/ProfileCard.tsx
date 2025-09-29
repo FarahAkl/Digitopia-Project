@@ -5,7 +5,8 @@ import type { UserResponseT } from "../schema/user/profile.schema";
 import Card from "./Card";
 import Heading from "./Heading";
 import { useAuth } from "../hooks/useAuth";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
+import { MdModeEditOutline } from "react-icons/md";
 
 type ProfileSuccessT = Exclude<UserResponseT, { message: string }>;
 
@@ -13,6 +14,7 @@ export default function ProfileCard({ data }: { data: ProfileSuccessT }) {
   const { logout } = useAuth();
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
   const handleDelete = async () => {
     setError(null);
     try {
@@ -40,6 +42,15 @@ export default function ProfileCard({ data }: { data: ProfileSuccessT }) {
   return (
     <Card>
       <div className="m-10 w-full rounded-xl border-2 border-green-700 bg-white p-4 px-6 text-green-900 shadow-lg [&_p]:my-4">
+        <button
+          className="rounded-full border-3 p-1"
+          onClick={(e) => {
+            e.preventDefault();
+            navigate("/editProfile");
+          }}
+        >
+          <MdModeEditOutline size={25} />
+        </button>
         <Heading>Profile</Heading>
         {data.profileImageUrl && (
           <img
