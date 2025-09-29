@@ -71,12 +71,16 @@ export default function ChangePassword() {
     }
   };
 
-  if (loading) return <Spinner />;
+  if (loading) return (
+    <div className="flex h-screen items-center justify-center">
+      <Spinner />
+    </div>
+  );
 
   return (
     <>
       <Header />
-      <div className="flex h-[90vh] w-full items-center justify-center bg-blue-50">
+      <div className="flex h-[90vh] w-full items-center justify-center bg-blue-50 p-5">
         <Card>
           <Heading>ChangePassword</Heading>
           <div className="mb-3 flex w-full flex-col gap-2 [&_input]:w-full [&_input]:rounded-sm [&_input]:bg-blue-50 [&_input]:px-2 [&_input]:py-1">
