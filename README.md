@@ -34,13 +34,15 @@ This project aims to provide a smart platform to:
 
 ## 🗂️ Project Structure
 
-/ (root)
-├─ Frontend/ # Frontend code
-├─ Backend/ # API code
-├─ Docs/ # UML diagrams (Use Case, Class, Sequence)
-├─ presentation.pdf # Project presentation
-├─ demo-video.mp4 # Final demo video
-└─ README.md
+```bash
+    / (root)
+    ├─ Frontend/        # Frontend code
+    ├─ Backend/         # API code
+    ├─ Docs/            # UML diagrams (Use Case, Class, Sequence)
+    ├─ presentation.pdf # Project presentation
+    ├─ demo-video.mp4   # Final demo video
+    └─ README.md
+```
 
 ---
 
