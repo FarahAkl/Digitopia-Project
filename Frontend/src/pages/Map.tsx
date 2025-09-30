@@ -26,6 +26,12 @@ export default function Map() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
+  const handleClose = () => {
+    setError(null);
+    setData(null);
+    setLoading(false);
+  };
+
   useLeafletFix();
 
   const {
@@ -102,7 +108,12 @@ export default function Map() {
         <DetectClick />
         <LocationMarker />
       </MapContainer>
-      <Prediciton data={data} error={error} loading={loading} />
+      <Prediciton
+        data={data}
+        error={error}
+        loading={loading}
+        onClose={handleClose}
+      />
     </div>
   );
 }
