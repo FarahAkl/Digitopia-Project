@@ -87,6 +87,36 @@ export default function EditProfile() {
         <Card>
           <Heading>Edit Profile</Heading>
           <div className="mb-3 flex w-full flex-col gap-2 [&_input]:w-full [&_input]:rounded-sm [&_input]:bg-blue-50 [&_input]:px-2 [&_input]:py-1">
+            <div
+              onClick={() =>
+                document.getElementById("uploadImageInput")?.click()
+              }
+              className="absolute top-14 right-3 z-40 flex h-30 w-30 items-center justify-center rounded-full border-4 border-green-600 bg-green-900 text-center lg:top-8"
+            >
+              <p className="text-xl font-semibold text-amber-50">
+                {!form.profileImageUrl ? (
+                  "+ Upload Image"
+                ) : (
+                  <img
+                    src={form.profileImageUrl}
+                    className="h-24 w-24 rounded-full"
+                  />
+                )}
+              </p>
+              <input
+                hidden
+                id="uploadImageInput"
+                type="file"
+                accept="image/*"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) {
+                    const url = URL.createObjectURL(file);
+                    setForm((prev) => ({ ...prev, profileImageUrl: url }));
+                  }
+                }}
+              />
+            </div>
             <input
               type="text"
               name="name"
@@ -114,18 +144,18 @@ export default function EditProfile() {
             <input
               type="text"
               name="location"
-              value={form.location??''}
+              value={form.location ?? ""}
               onChange={handleChange}
               placeholder="Location"
             />
 
-            <input
+            {/* <input
               type="text"
               name="profileImageUrl"
               value={form.profileImageUrl ?? ""}
               onChange={handleChange}
               placeholder="Profile Image URL"
-            />
+            /> */}
 
             <button
               type="button"
