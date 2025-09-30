@@ -55,9 +55,10 @@ export default function ProfileCard({ data }: { data: ProfileSuccessT }) {
         {data.profileImageUrl && (
           <img
             src={
-              data.profileImageUrl === null
-                ? "/default-user.jpg"
-                : data.profileImageUrl
+              "/default-user.jpg"
+              // data.profileImageUrl === null
+              //   ? "/default-user.jpg"
+              //   : data.profileImageUrl
             }
             alt={`${data.name}'s profile`}
             className="mx-auto my-6 h-24 w-24 rounded-full border-3 object-cover"
