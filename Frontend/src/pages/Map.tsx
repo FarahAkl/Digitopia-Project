@@ -152,7 +152,7 @@ function LocationMarker() {
       <Marker position={position} />
       <Circle
         center={position}
-        radius={10000}
+        radius={7000}
         pathOptions={{
           color: "green",
           fillColor: "lightgreen",
