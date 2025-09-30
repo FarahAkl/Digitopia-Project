@@ -15,7 +15,7 @@ This project aims to provide a smart platform to:
 
 - **Frontend**: React 19 , Tailwindcss , Leafleat , zod and Axios.
 - **Backend**: .NET Core.
-- **Database**: PostgreSQL / MySQL.
+- **Database**: SQLServer.
 - **AI and Data Analysis** : Python (Pandas, NumPy, Sklearn), Matplotlib, Seaborn, Folium
 - **Tools**: GitHub, Docker, Draw.io (for UML & ERD).
 
