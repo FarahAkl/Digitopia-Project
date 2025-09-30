@@ -38,6 +38,7 @@ This project aims to provide a smart platform to:
     / (root)
     ├─ Frontend/        # Frontend code
     ├─ Backend/         # API code
+    ├─ Data & AI/       # AI code and Csv files
     ├─ Docs/            # UML diagrams (Use Case, Class, Sequence)
     ├─ presentation.pdf # Project presentation
     ├─ demo-video.mp4   # Final demo video
